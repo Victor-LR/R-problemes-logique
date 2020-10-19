@@ -49,7 +49,7 @@ int main(int argc, char **argv)
                     break;
                 }
 
-			string arg = ligne.substr(i, nextArg-1);
+			string arg = ligne.substr(i, nextArg-i);
 			variables.push_back(arg);
 			i = nextArg+1;
 			
