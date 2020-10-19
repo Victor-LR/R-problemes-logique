@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 			if( nextArg == string::npos)
                 { // pas de vigule trouvee, on en est au dernier argument
 					nextArg = ligne.find('.', i);
-					string arg = ligne.substr(i, nextArg);
+					string arg = ligne.substr(i, nextArg-i-1);
 					variables.push_back(arg);
                     break;
                 }
