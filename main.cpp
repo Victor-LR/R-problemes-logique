@@ -1,5 +1,3 @@
-
-
 #include <iostream>
 #include <cmath>
 #include <string>
@@ -7,11 +5,100 @@
 #include <map>
 #include <fstream>
 #include <iostream>
-#include <tuple>
 
 using namespace std;
 
-vector<pair<string, vector<vector<string>>>> regles;
+vector<pair<string, vector<vector<string>>>> listPredicat;
+vector<vector<pair<string, vector<string>>>> listRegles; //la première paire est le nom de la regle
+
+void readPredicat(string ligne)
+{
+	bool newPredicat = true; //cas ou regle non existante
+	pair<string, vector<vector<string>>> nouveauPredicat;
+	size_t debutArgs = ligne.find('(');
+
+	string nomPredicat = ligne.substr(0, debutArgs - 1);
+	for (pair<string, vector<vector<string>>> p : listPredicat)
+	{
+		if (!p.first.compare(nomPredicat))
+		{
+			nouveauPredicat = p;
+			newPredicat = false;
+			break;
+		}
+	}
+	nouveauPredicat.first = nomPredicat;
+	int i = debutArgs + 1;
+	vector<string> variables;
+	while (i < ligne.length())
+	{ // boucle jusqu'Ã  la fin de la ligne
+		size_t nextArg = ligne.find(',', i);
+
+		if (nextArg == string::npos)
+		{ // pas de vigule trouvee, on en est au dernier argument
+			nextArg = ligne.find(')', i);
+			string arg = ligne.substr(i, nextArg - i);
+			variables.push_back(arg);
+			break;
+		}
+		string arg = ligne.substr(i, nextArg - i);
+		variables.push_back(arg);
+		i = nextArg + 1;
+	}
+	nouveauPredicat.second.push_back(variables);
+	if (newPredicat)
+	{
+		listPredicat.push_back(nouveauPredicat);
+	}
+	else
+	{
+		for (auto &p : listPredicat)
+		{
+			if ((p.first.compare(nouveauPredicat.first)) == 0)
+			{
+				p.second.push_back(variables);
+				break;
+			}
+		}
+	}
+}
+
+
+void readRegle(string ligne)
+{
+	bool newRegle = true; //cas ou regle non existante
+	vector<pair<string, vector<string>>> nouvelleRegle;
+
+	int i = 0;
+	while (i < ligne.length())
+	{ // boucle jusqu'Ã  la fin de la ligne
+		pair<string, vector<string>> predicat;
+		size_t debutArgs = ligne.find('(', i);
+		string nomPredicat = ligne.substr(0, debutArgs - 1);
+
+		predicat.first = nomPredicat;
+		size_t nextArg;
+		size_t finRegle = ligne.find(')', i);
+		string variablesBrutes = ligne.substr(debutArgs + 1, finRegle - i);
+		int cptVarBrutes = 0;
+		do
+		{
+			vector<string> variables;
+			nextArg = variablesBrutes.find(',', cptVarBrutes);
+			string arg = variablesBrutes.substr(cptVarBrutes, nextArg - cptVarBrutes);
+			cptVarBrutes = nextArg + 1;
+			variables.push_back(arg);
+			predicat.second = variables;
+		} while (nextArg != string::npos);
+		nouvelleRegle.push_back(predicat);
+		i = finRegle + 1;
+		if (ligne.find(".") == i)
+		{
+			break;
+		}
+	}
+	listRegles.push_back(nouvelleRegle);
+}
 
 int main(int argc, char **argv)
 {
@@ -20,57 +107,39 @@ int main(int argc, char **argv)
 	vector<vector<string>> arguments;
 	while (getline(fichier, ligne))
 	{
-		bool newRegle = true;
-		pair<string, vector<vector<string>>> nouvelleRegle;
-		size_t debutArgs = ligne.find('(');
-		string regle = ligne.substr(0, debutArgs - 1);
-			for (pair<string, vector<vector<string>>> p : regles)
-			{
-				if(!p.first.compare(regle)){
-					nouvelleRegle = p;
-					newRegle = false;
-					break;
-				}
-			}
-		nouvelleRegle.first = regle;
-		int i = debutArgs + 1;
-		vector<string> variables;
-		while (i < ligne.length())
-		{ // boucle jusqu'Ã  la fin de la ligne
-			size_t nextArg = ligne.find(',', i);
-			if( nextArg == string::npos)
-                { // pas de vigule trouvee, on en est au dernier argument
-					nextArg = ligne.find('.', i);
-					string arg = ligne.substr(i, nextArg-i-1);
-					variables.push_back(arg);
-                    break;
-                }
-			string arg = ligne.substr(i, nextArg-i);
-			variables.push_back(arg);
-			i = nextArg+1;
-			
+		size_t isPredicat = ligne.find(":-");
+		if (isPredicat != string::npos)
+		{
+			readRegle(ligne);
 		}
-		nouvelleRegle.second.push_back(variables);
-		if(newRegle){
-			regles.push_back(nouvelleRegle);
+		else
+		{
+			readPredicat(ligne);
 		}
-		else{
-			for(auto & p : regles){
-				if ((p.first.compare(nouvelleRegle.first)) == 0){
-					p.second.push_back(variables);
-					break;
-				}
-			}
-		}	
 	}
-	for(pair<string, vector<vector<string>>> p :regles){
+	for (pair<string, vector<vector<string>>> p : listPredicat)
+	{
 		//cout<<p.first<<endl;
-			for(vector<string> p2 :p.second){
-				for(string p3 :p2){
-					cout<<' '<< p.first <<" :"<<p3 << ' ' <<endl;
-				}
+		for (vector<string> p2 : p.second)
+		{
+			for (string p3 : p2)
+			{
+				cout << ' ' << p.first << " :" << p3 << ' ' << endl;
+			}
 		}
 	}
+	for (auto p : listRegles)
+	{
+		//cout<<p.first<<endl;
+		for (auto p2 : p)
+		{
+			for (string p3 : p2.second)
+			{
+				cout << " regle " << p2.first << " :" << p3 << ' ' << endl;
+			}
+		}
+	}
+
 	fichier.close();
 	return 0;
-	}
+}
