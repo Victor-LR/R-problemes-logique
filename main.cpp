@@ -45,17 +45,24 @@ int main(int argc, char **argv)
 					variables.push_back(arg);
                     break;
                 }
-
 			string arg = ligne.substr(i, nextArg-i);
 			variables.push_back(arg);
 			i = nextArg+1;
 			
 		}
 		nouvelleRegle.second.push_back(variables);
-					if(newRegle){
-						regles.push_back(nouvelleRegle);
-					}
+		if(newRegle){
+			regles.push_back(nouvelleRegle);
 		}
+		else{
+			for(auto & p : regles){
+				if ((p.first.compare(nouvelleRegle.first)) == 0){
+					p.second.push_back(variables);
+					break;
+				}
+			}
+		}	
+	}
 	for(pair<string, vector<vector<string>>> p :regles){
 		//cout<<p.first<<endl;
 			for(vector<string> p2 :p.second){
