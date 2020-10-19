@@ -1,6 +1,6 @@
 
 all:
-	g++ main.cpp -o test
+	g++ -std=c++14 main.cpp -o test
 
 clean:
 	rm -f *.o main
