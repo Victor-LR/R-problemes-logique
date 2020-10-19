@@ -1,3 +1,3 @@
 touslesmots(bob,george,roger).
-dico(couille,molle).
+dico(gilbert,montagné).
 touslesmots(ok,bommer).

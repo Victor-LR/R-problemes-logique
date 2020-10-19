@@ -1,15 +1,17 @@
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
-#include <unistd.h>
-#include <stdio.h> 
-#include <stdlib.h> 
+
 #include <iostream>
 #include <cmath>
+#include <string>
+#include <vector>
+#include <map>
+#include <fstream>
+#include <iostream>
+#include <tuple>
 
+using namespace std;
 
-int main(int argc, char **argv) {
+vector<pair<string, vector<vector<string>>>> regles;
 
 int main(int argc, char **argv)
 {
@@ -64,4 +66,4 @@ int main(int argc, char **argv)
 	}
 	fichier.close();
 	return 0;
-}
+	}
