@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <map>
 
 using namespace std;
 
@@ -247,25 +248,45 @@ public:
 
 
 	void generate_deduce(vector< vector < pair<string, vector<string>> >> regles,  ofstream & file){
-		for(auto regle : regles){
-			string nomRegle = regle.at(0).first;
-			auto variablesRegle = regle.at(0).second;
-			auto nbpredicat = regle.size();
-			auto tuple_size = regle.at(0).second.size();;
-			file << "void " + nomRegle + "_deduce(){\n";
-			for(int i = 1; i<nbpredicat; i++){
-				file << "\tfor(auto t" << i << " : " << nomRegle << "){\n\t";
-			}
-			file << "\tif(condition){\n";
-			file << "\t" + nomRegle + ".push_back(Tuple" << tuple_size << "(";
-			//A MODIFIER faire la correspondance t1[0] : X1
-			file << "tA[X], tB[Y]));\n";
-			file << "}";
-			for(int i = 0; i<nbpredicat; i++){
-				file << "}";
+	map<string, pair<string, int>> mapVariables;
+
+	for(auto regle : regles){
+		string nomRegle = regle.at(0).first;
+		auto variablesRegle = regle.at(0).second;
+		auto nbpredicat = regle.size();
+		auto tuple_size = regle.at(0).second.size();;
+		file << "void " + nomRegle + "_deduce(){\n";
+
+		for(int t = 1; t<regle.size(); t++){
+			auto predicat = regle.at(t);
+			string nomPredicat = predicat.first;
+			file << "\tfor(auto t" << t << " : " << nomPredicat << "){\n\t";
+			int i = 0;
+			for(auto variable : predicat.second){ //pour chaque variable du predicat {X, Y, ...}
+				if(mapVariables.find(variable) == mapVariables.end()){
+					string tString = "t"+to_string(t);
+					pair<string, pair<string,int>> p  = make_pair(variable, make_pair(tString, i));
+					mapVariables.insert(p);
+				}
+				i++;
 			}
 		}
+		//A FAIRE generer condition
+		file << "\tif(condition){\n";
+		file << "\t" + nomRegle + ".push_back(Tuple" << tuple_size << "(";
+		//A MODIFIER utiliser mapVariables pour remplacer X par t1[0]
+		file << "tA[X], tB[Y]));\n";
+		file << "}";
+		for(int i = 0; i<nbpredicat; i++){
+			file << "}\n";
+		}
 	}
+	for(auto it = mapVariables.begin(); it != mapVariables.end(); it++){
+		string t =it->second.first;
+		std::cout << it->first << "->" << t << "[" << it->second.second << "]" <<  '\n';
+	}
+}
+
 
 
 };
