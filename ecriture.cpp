@@ -70,6 +70,7 @@ public:
 				diese+"include <stdio.h>\n"+
 				diese+"include <stdlib.h>\n"+
 				diese+"include <iostream>\n"+
+				diese+"include <list>\n"+
 				"using namespace std;\n\n";
 	}
 
@@ -99,6 +100,25 @@ public:
 		file << "\t}\n\n";
 
 		file << "};\n\n";
+	}
+	
+	void generateVectorPredicat(vector<pair<string, vector<vector<string>>>> predicats, ofstream &file){
+		//parcour de chaque paire (nom, liste(liste(string)))
+		for(auto p : predicats){
+			auto nom = p.first;
+			auto tuple_size = p.second.at(0).size();
+			file << "list<Tuple" << tuple_size << "> " + nom + ";\n";
+			//parcour de la liste de n-uplets {(Michel,Jean), (Pierre, Paul), ....}
+			/* for(auto nuplet : p.second){
+				file << nom + ".push_back(Tuple" << tuple_size << "(";
+				//parcour chaque string du nuplet (Jean)
+				for(int i = 0; i < nuplet.size(); i++){
+					file << "new Value(\""+nuplet.at(i)+"\")" << (i==nuplet.size()-1 ? "" : ",");
+				}
+				file << "));\n";
+			}*/
+		}
+		file << "\n";
 	}
 
 	void generateClassVariable(ofstream &file){
@@ -134,23 +154,23 @@ public:
 		file << "};\n\n";
 	}
 
-	void generateVectorPredicat(vector<pair<string, vector<vector<string>>>> predicats, ofstream &file){
-		//parcour de chaque paire (nom, liste(liste(string)))
-		for(auto p : predicats){
-			auto nom = p.first;
-			auto tuple_size = p.second.at(0).size();
-			file << "list<Tuple" << tuple_size << "> " + nom + ";\n";
-			//parcour de la liste de n-uplets {(Michel,Jean), (Pierre, Paul), ....}
-			for(auto nuplet : p.second){
-				file << nom + ".push_back(Tuple" << tuple_size << "(";
-				//parcour chaque string du nuplet (Jean)
-				for(int i = 0; i < nuplet.size(); i++){
-					file << "new Value(\""+nuplet.at(i)+"\")" << (i==nuplet.size()-1 ? "" : ",");
-				}
-				file << "));\n";
-			}
-		}
-	}
+	// void generateVectorPredicat(vector<pair<string, vector<vector<string>>>> predicats, ofstream &file){
+	// 	//parcour de chaque paire (nom, liste(liste(string)))
+	// 	for(auto p : predicats){
+	// 		auto nom = p.first;
+	// 		auto tuple_size = p.second.at(0).size();
+	// 		file << "list<Tuple" << tuple_size << "> " + nom + ";\n";
+	// 		//parcour de la liste de n-uplets {(Michel,Jean), (Pierre, Paul), ....}
+	// 		for(auto nuplet : p.second){
+	// 			file << nom + ".push_back(Tuple" << tuple_size << "(";
+	// 			//parcour chaque string du nuplet (Jean)
+	// 			for(int i = 0; i < nuplet.size(); i++){
+	// 				file << "new Value(\""+nuplet.at(i)+"\")" << (i==nuplet.size()-1 ? "" : ",");
+	// 			}
+	// 			file << "));\n";
+	// 		}
+	// 	}
+	// }
 
 	void generateClassTuple(vector<vector <pair<string, vector<string>>>> regles, vector<pair<string, vector<vector<string>>>> predicat, ofstream & file){
 
@@ -204,7 +224,6 @@ public:
 				charVariable = (char)97+i;
 				file << "\t\t object[" << i << "] = " + charVariable + ";\n";
 			}
-
 			file << "\t}\n\n";
 
 			for (int i = 0 ; i < nombreArg ; i++){
@@ -222,6 +241,31 @@ public:
 
 		}
 	}
+
+	void generateSolution(vector<pair<string, vector<vector<string>>>> predicats, ofstream & file){
+		file << "void solution(){\n";
+		for(auto p : predicats){
+			auto nom = p.first;
+			auto tuple_size = p.second.at(0).size();
+			//parcour de la liste de n-uplets {(Michel,Jean), (Pierre, Paul), ....}
+			for(auto nuplet : p.second){
+				file << "\t" << nom + ".push_back(Tuple" << tuple_size << "(";
+				//parcour chaque string du nuplet (Jean)
+				for(int i = 0; i < nuplet.size(); i++){
+					file << "new Value(\""+nuplet.at(i)+"\")" << (i==nuplet.size()-1 ? "" : ",");
+				}
+				file << "));\n";
+			}
+		}
+		file << "};\n\n";
+	}
+
+	void generateMain(ofstream &file){
+		file << "int main(int argc, char **argv){\n";
+		file << "\tsolution();\n";
+		file << "};\n\n";
+	}
+
 
 	void generate_deduce(vector< vector < pair<string, vector<string>> >> regles,  ofstream & file){
 		for(auto regle : regles){
@@ -254,7 +298,6 @@ public:
 	// 		}
 	// 	}
 	// }
-
 
 
 };
