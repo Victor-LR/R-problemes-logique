@@ -25,7 +25,27 @@ void generateVectorPredicat(vector<pair<string, vector<vector<string>>>> predica
 	}
 }
 
+void generateClassTuple(vector<vector <pair<string, vector<string>>>> regles, ofstream & file){
+	//le nombre d'arguments de la 1er règle 
+	auto nombreArg = regles.at(0).at(0).second.size();
+	file << "class Tuple" << nombreArg << " {\n" ;
+	file << "public:\n";
+	file << "\tObject *object["<<nombreArg<<"];\n\n";
+	file <<"\tTuple" << nombreArg << "(";
+	for (int i = 0 ; i < nombreArg ; i++){
+		string charVariable;
+		charVariable = (char)97+i;
+		file << "Object *"<<charVariable<<",";
+	} 
+	file << "\n};\n";
+}
+
+
+
 int main(int argc, char **argv) {
+	vector<string> variablesRegle = {"X","Y","Z"};
+	vector<string> variablesPred1 = {"X","Y"};
+	vector<string> variablesPred2 = {"Y","Z"};
 
 		vector<pair<string, vector<vector<string>>>> genealogie;
 		vector<string> michjean;
@@ -47,15 +67,27 @@ int main(int argc, char **argv) {
 		genealogie.push_back(make_pair("mere", couplesmeres));
 
 		string diese;
+	vector < pair<string, vector<string>> > listPred;
+	listPred.push_back(make_pair("grand_pere",variablesRegle));
+	listPred.push_back(make_pair("pere",variablesPred1));
+	listPred.push_back(make_pair("pere",variablesPred2));
+
+	vector< vector < pair<string, vector<string>> >> regles;
+
+	regles.push_back(listPred);
 		diese = (char)35;
+		
 		cout << diese << '\n';
 		ofstream myfile;
-	  myfile.open ("example.cpp");
-	  // myfile << diese+"include <unistd.h>\n"+
-		// diese+"include <stdio.h>\n"+
-		// diese+"include <stdlib.h>\n"+
-		// diese+"include <iostream>\n";
-		generateVectorPredicat(genealogie, myfile);
-	  myfile.close();
+	myfile.open ("example.cpp");
+	myfile << diese+"include <unistd.h>\n"+
+		diese+"include <stdio.h>\n"+
+		diese+"include <stdlib.h>\n"+
+		diese+"include <iostream>\n"+"\n";
+
+	generateClassTuple(regles,myfile);
+	generateVectorPredicat(genealogie, myfile);
+	
+	myfile.close();
 	return 0;
 }
