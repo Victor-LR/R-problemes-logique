@@ -225,6 +225,10 @@ int main(int argc, char **argv) {
 		couplesmeres.push_back(mariejean);
 		genealogie.push_back(make_pair("mere", couplesmeres));
 
+
+	vector<string> variablesRegle = {"X","Z"};
+	vector<string> variablesPred1 = {"X","Y"};
+	vector<string> variablesPred2 = {"Y","Z"};
 		
 	vector < pair<string, vector<string>> > listPred;
 	listPred.push_back(make_pair("grand_pere",variablesRegle));
