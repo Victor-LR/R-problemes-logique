@@ -15,7 +15,7 @@ class Ecriture {
 public:
 
 		Ecriture(vector<pair<string, vector<vector<string>>>> listPredicat, vector<vector<pair<string, vector<string>>>> listRegles){
-		
+
 		// // TEST
 		// vector<pair<string, vector<vector<string>>>> genealogie;
 		// vector<string> michjean;
@@ -40,7 +40,7 @@ public:
 		// vector<string> variablesRegle = {"X","Z"};
 		// vector<string> variablesPred1 = {"X","Y"};
 		// vector<string> variablesPred2 = {"Y","Z"};
-			
+
 		// vector < pair<string, vector<string>> > listPred;
 		// listPred.push_back(make_pair("grand_pere",variablesRegle));
 		// listPred.push_back(make_pair("pere",variablesPred1));
@@ -105,7 +105,8 @@ public:
 
 		file << "};\n\n";
 	}
-	
+
+	//declaration des listes de tuples
 	void generateVectorPredicat(vector<pair<string, vector<vector<string>>>> predicats, ofstream &file){
 		//parcour de chaque paire (nom, liste(liste(string)))
 		for(auto p : predicats){
@@ -189,8 +190,8 @@ public:
 
 		for (int nbt : typesTuples){
 
-			
-			//le nombre d'arguments de la 1er règle 
+
+			//le nombre d'arguments de la 1er règle
 			int nombreArg = nbt;
 			string charVariable;
 
@@ -206,7 +207,7 @@ public:
 					file << "Object *"<<charVariable<<") {\n";
 				else
 					file << "Object *"<<charVariable<<", ";
-				
+
 			}
 
 			//intitialiser les paramètres
@@ -224,7 +225,7 @@ public:
 
 			file << "\tObject *operator[](int n) {\n"
 				<< " \t\treturn object[n];\n\t}\n";
-			
+
 
 
 			file << "\n};\n\n";
@@ -232,6 +233,7 @@ public:
 		}
 	}
 
+	//remplissage des listes de tuples crees par generateVectorPredicat
 	void generateSolution(vector<pair<string, vector<vector<string>>>> predicats, ofstream & file){
 		file << "void solution(){\n";
 		for(auto p : predicats){
@@ -274,11 +276,11 @@ public:
 			tab += "\t";
 			int i = 0;
 			for(auto variable : predicat.second){ //pour chaque variable du predicat {X, Y, ...}
-				if(mapVariables.find(variable) == mapVariables.end()){
+				// if(mapVariables.find(variable) == mapVariables.end()){
 					string tString = "t"+to_string(t);
 					pair<string, pair<string,int>> p  = make_pair(variable, make_pair(tString, i));
 					mapVariables.insert(p);
-				}
+				// }
 				i++;
 			}
 		}
