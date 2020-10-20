@@ -59,6 +59,8 @@ public:
 		generateClassTuple(listRegles,listPredicat,myfile);
 		generateVectorPredicat(listPredicat, myfile);
 		generate_deduce(listRegles, myfile);
+		generateSolution(listPredicat,myfile);
+		generateMain(myfile);
 		cout<<"Le fichier a été généré"<<endl;
 		myfile.close();
 	}
