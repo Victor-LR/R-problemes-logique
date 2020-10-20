@@ -15,39 +15,39 @@ public:
 
 		Ecriture(vector<pair<string, vector<vector<string>>>> listPredicat, vector<vector<pair<string, vector<string>>>> listRegles){
 		
-		// TEST
-		vector<pair<string, vector<vector<string>>>> genealogie;
-		vector<string> michjean;
-		michjean.push_back("Michel");
-		michjean.push_back("Jean");
-		vector<string> pierrepaul;
-		pierrepaul.push_back("Pierre");
-		pierrepaul.push_back("Paul");
+		// // TEST
+		// vector<pair<string, vector<vector<string>>>> genealogie;
+		// vector<string> michjean;
+		// michjean.push_back("Michel");
+		// michjean.push_back("Jean");
+		// vector<string> pierrepaul;
+		// pierrepaul.push_back("Pierre");
+		// pierrepaul.push_back("Paul");
 
-		vector<vector<string>> couplesperes;
-		couplesperes.push_back(michjean);
-		couplesperes.push_back(pierrepaul);
-		genealogie.push_back(make_pair("pere", couplesperes));
+		// vector<vector<string>> couplesperes;
+		// couplesperes.push_back(michjean);
+		// couplesperes.push_back(pierrepaul);
+		// genealogie.push_back(make_pair("pere", couplesperes));
 
-		vector<string> mariejean;
-		mariejean.push_back("Marie");
-		mariejean.push_back("Jean");
-		vector<vector<string>> couplesmeres;
-		couplesmeres.push_back(mariejean);
-		genealogie.push_back(make_pair("mere", couplesmeres));
+		// vector<string> mariejean;
+		// mariejean.push_back("Marie");
+		// mariejean.push_back("Jean");
+		// vector<vector<string>> couplesmeres;
+		// couplesmeres.push_back(mariejean);
+		// genealogie.push_back(make_pair("mere", couplesmeres));
 
-		vector<string> variablesRegle = {"X","Z"};
-		vector<string> variablesPred1 = {"X","Y"};
-		vector<string> variablesPred2 = {"Y","Z"};
+		// vector<string> variablesRegle = {"X","Z"};
+		// vector<string> variablesPred1 = {"X","Y"};
+		// vector<string> variablesPred2 = {"Y","Z"};
 			
-		vector < pair<string, vector<string>> > listPred;
-		listPred.push_back(make_pair("grand_pere",variablesRegle));
-		listPred.push_back(make_pair("pere",variablesPred1));
-		listPred.push_back(make_pair("pere",variablesPred2));
+		// vector < pair<string, vector<string>> > listPred;
+		// listPred.push_back(make_pair("grand_pere",variablesRegle));
+		// listPred.push_back(make_pair("pere",variablesPred1));
+		// listPred.push_back(make_pair("pere",variablesPred2));
 
-		vector< vector < pair<string, vector<string>> >> regles;
-		regles.push_back(listPred);
-		//FIN TEST
+		// vector< vector < pair<string, vector<string>> >> regles;
+		// regles.push_back(listPred);
+		// //FIN TEST
 
 		ofstream myfile;
 		myfile.open ("example.cpp");
@@ -156,28 +156,9 @@ public:
 		file << "};\n\n";
 	}
 
-	// void generateVectorPredicat(vector<pair<string, vector<vector<string>>>> predicats, ofstream &file){
-	// 	//parcour de chaque paire (nom, liste(liste(string)))
-	// 	for(auto p : predicats){
-	// 		auto nom = p.first;
-	// 		auto tuple_size = p.second.at(0).size();
-	// 		file << "list<Tuple" << tuple_size << "> " + nom + ";\n";
-	// 		//parcour de la liste de n-uplets {(Michel,Jean), (Pierre, Paul), ....}
-	// 		for(auto nuplet : p.second){
-	// 			file << nom + ".push_back(Tuple" << tuple_size << "(";
-	// 			//parcour chaque string du nuplet (Jean)
-	// 			for(int i = 0; i < nuplet.size(); i++){
-	// 				file << "new Value(\""+nuplet.at(i)+"\")" << (i==nuplet.size()-1 ? "" : ",");
-	// 			}
-	// 			file << "));\n";
-	// 		}
-	// 	}
-	// }
 
 	void generateClassTuple(vector<vector <pair<string, vector<string>>>> regles, vector<pair<string, vector<vector<string>>>> predicat, ofstream & file){
 
-		int nombreTuple = regles.size() + predicat.size();
-		//cout << regles.size() << "    " << predicat.size() << endl;
 		vector <int> typesTuples;
 
 		for (auto r : regles){
@@ -193,10 +174,6 @@ public:
 					typesTuples.push_back(nuplet.size());
 			}
 		}
-
-		// for (auto t : typesTuples){
-		// 	cout << t << "  -> t  " << endl;
-		// }
 
 
 		for (int nbt : typesTuples){
@@ -289,17 +266,6 @@ public:
 			}
 		}
 	}
-
-	// 			string predicat = regle.at(i).first;
-	// 			file << predicat << "(";
-	// 			for(auto variable : regle.at(i).second){
-	// 				file << variable << ",";
-	// 			}
-	// 			file << "),";
-	//
-	// 		}
-	// 	}
-	// }
 
 
 };
