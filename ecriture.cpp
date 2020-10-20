@@ -79,7 +79,7 @@ void generateClassValue(ofstream &file){
 	file << "};\n\n";
 }
 
-void generateVectorPredicat(vector<pair<string, vector<vector<string>>>> predicat, ofstream &file){
+void generateVectorPredicat(vector<pair<string, vector<vector<string>>>> predicats, ofstream &file){
 	//parcour de chaque paire (nom, liste(liste(string)))
 	for(auto p : predicats){
 		auto nom = p.first;
