@@ -63,7 +63,6 @@ void readPredicat(string ligne)
 	}
 }
 
-
 void readRegle(string ligne)
 {
 	bool newRegle = true; //cas ou regle non existante
@@ -75,16 +74,18 @@ void readRegle(string ligne)
 		pair<string, vector<string>> predicat;
 		size_t debutArgs = ligne.find('(', i);
 		string nomPredicat = ligne.substr(i, debutArgs - i);
-		if(nomPredicat.find(":-") != string::npos){
-			nomPredicat=nomPredicat.substr(2);
+		if (nomPredicat.find(":-") != string::npos)
+		{
+			nomPredicat = nomPredicat.substr(2);
 		}
-		if(nomPredicat.find(",") != string::npos){
-			nomPredicat=nomPredicat.substr(1);
+		if (nomPredicat.find(",") != string::npos)
+		{
+			nomPredicat = nomPredicat.substr(1);
 		}
 		predicat.first = nomPredicat;
 		size_t nextArg;
 		size_t finRegle = ligne.find(')', i);
-		string variablesBrutes = ligne.substr(debutArgs + 1, finRegle - debutArgs-1);
+		string variablesBrutes = ligne.substr(debutArgs + 1, finRegle - debutArgs - 1);
 		int cptVarBrutes = 0;
 		vector<string> variables;
 		do
@@ -138,12 +139,12 @@ int main(int argc, char **argv)
 		//cout<<p.first<<endl;
 		for (auto p2 : p)
 		{
-			cout <<p2.first;
+			cout << p2.first;
 			for (string p3 : p2.second)
 			{
 				cout << " " << p3;
 			}
-			cout<<endl;
+			cout << endl;
 		}
 	}
 
