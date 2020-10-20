@@ -7,20 +7,21 @@
 #include "readFile.cpp"
 using namespace std;
 
-
-
 int main(int argc, char **argv)
 {
 	string fileName;
-	if(argv[1] == nullptr){
-		cout<<"paramètre non renseigné"<<endl;
+	if (argv[1] == nullptr)
+	{
+		cout << "paramètre non renseigné" << endl;
 		return 0;
-	}else{
+	}
+	else
+	{
 		fileName = argv[1];
 	}
 
 	read(fileName);
-	Ecriture ecrire(listPredicat,listRegles);
-	
+	Ecriture ecrire(listPredicat, listRegles);
+
 	return 0;
 }

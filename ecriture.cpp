@@ -56,10 +56,10 @@ public:
 		generateClassObject(myfile);
 		generateClassVariable(myfile);
 		generateClassValue(myfile);
-		generateClassTuple(regles,genealogie,myfile);
-		generateVectorPredicat(genealogie, myfile);
-		generate_deduce(regles, myfile);
-
+		generateClassTuple(listRegles,listPredicat,myfile);
+		generateVectorPredicat(listPredicat, myfile);
+		generate_deduce(listRegles, myfile);
+		cout<<"Le fichier a été généré"<<endl;
 		myfile.close();
 	}
 
