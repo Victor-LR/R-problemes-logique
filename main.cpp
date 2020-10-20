@@ -108,7 +108,18 @@ void readRegle(string ligne)
 
 int main(int argc, char **argv)
 {
-	ifstream fichier("prolog.pl", ios::in);
+	string fileName;
+	if(argv[1] == nullptr){
+		cout<<"paramètre non renseigné"<<endl;
+		return 0;
+	}else{
+		fileName = argv[1];
+	}
+	ifstream fichier(fileName, ios::in);
+	if(!fichier.good()){
+		cout<<"le fichier renseigné en paramètre n'existe pas"<<endl;
+		return 0;
+	}
 	string ligne;
 	vector<vector<string>> arguments;
 	while (getline(fichier, ligne))
@@ -125,7 +136,6 @@ int main(int argc, char **argv)
 	}
 	for (pair<string, vector<vector<string>>> p : listPredicat)
 	{
-		//cout<<p.first<<endl;
 		for (vector<string> p2 : p.second)
 		{
 			for (string p3 : p2)
