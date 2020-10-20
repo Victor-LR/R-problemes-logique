@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -97,19 +98,75 @@ void generateVectorPredicat(vector<pair<string, vector<vector<string>>>> predica
 	}
 }
 
-void generateClassTuple(vector<vector <pair<string, vector<string>>>> regles, ofstream & file){
-	//le nombre d'arguments de la 1er règle
-	auto nombreArg = regles.at(0).at(0).second.size();
-	file << "class Tuple" << nombreArg << " {\n" ;
-	file << "public:\n";
-	file << "\tObject *object["<<nombreArg<<"];\n\n";
-	file <<"\tTuple" << nombreArg << "(";
-	for (int i = 0 ; i < nombreArg ; i++){
-		string charVariable;
-		charVariable = (char)97+i;
-		file << "Object *"<<charVariable<<",";
+void generateClassTuple(vector<vector <pair<string, vector<string>>>> regles, vector<pair<string, vector<vector<string>>>> predicat, ofstream & file){
+
+	int nombreTuple = regles.size() + predicat.size();
+	//cout << regles.size() << "    " << predicat.size() << endl;
+ 	vector <int> typesTuples;
+
+	for (auto r : regles){
+		auto it = find (typesTuples.begin(), typesTuples.end(), r.at(0).second.size());
+  		if (it == typesTuples.end())
+				typesTuples.push_back(r.at(0).second.size());
 	}
-	file << "\n};\n";
+
+	for (auto p : predicat){
+		for(auto nuplet : p.second){
+			auto it = find (typesTuples.begin(), typesTuples.end(), nuplet.size());
+  			if (it == typesTuples.end())
+				typesTuples.push_back(nuplet.size());
+		}
+	}
+
+	// for (auto t : typesTuples){
+	// 	cout << t << "  -> t  " << endl;
+	// }
+
+
+	for (int nbt : typesTuples){
+
+		
+		//le nombre d'arguments de la 1er règle 
+		int nombreArg = nbt;
+		string charVariable;
+
+		file << "class Tuple" << nombreArg << " {\n" ;
+		file << "public:\n";
+		file << "\tObject *object["<<nombreArg<<"];\n\n";
+		file <<"\tTuple" << nombreArg << "(";
+
+		//Le nombre de paramètre du constructeur
+		for (int i = 0 ; i < nombreArg ; i++){
+			charVariable = (char)97+i;
+			if (i == nombreArg-1)
+				file << "Object *"<<charVariable<<") {\n";
+			else
+				file << "Object *"<<charVariable<<", ";
+			
+		}
+
+		//intitialiser les paramètres
+		for (int i = 0 ; i < nombreArg ; i++){
+			charVariable = (char)97+i;
+			file << "\t\t object[" << i << "] = " + charVariable + ";\n";
+		}
+
+		file << "\t}\n\n";
+
+		for (int i = 0 ; i < nombreArg ; i++){
+			file << "\tObject& x" << i+1 << "() {\n";
+			file << "\t\treturn *object[" << i << "];\n\t}\n";
+
+		}
+
+		file << "\tObject *operator[](int n) {\n"
+			<< " \t\treturn object[n];\n\t}\n";
+		
+
+
+		file << "\n};\n\n";
+
+	}
 }
 
 void generate_deduce(vector< vector < pair<string, vector<string>> >> regles,  ofstream & file){
@@ -147,9 +204,6 @@ void generate_deduce(vector< vector < pair<string, vector<string>> >> regles,  o
 
 
 int main(int argc, char **argv) {
-	vector<string> variablesRegle = {"X","Z"};
-	vector<string> variablesPred1 = {"X","Y"};
-	vector<string> variablesPred2 = {"Y","Z"};
 
 		vector<pair<string, vector<vector<string>>>> genealogie;
 		vector<string> michjean;
@@ -158,6 +212,7 @@ int main(int argc, char **argv) {
 		vector<string> pierrepaul;
 		pierrepaul.push_back("Pierre");
 		pierrepaul.push_back("Paul");
+		pierrepaul.push_back("Jacques");
 		vector<vector<string>> couplesperes;
 		couplesperes.push_back(michjean);
 		couplesperes.push_back(pierrepaul);
@@ -170,7 +225,13 @@ int main(int argc, char **argv) {
 		couplesmeres.push_back(mariejean);
 		genealogie.push_back(make_pair("mere", couplesmeres));
 
-		
+		string diese;
+
+
+	vector<string> variablesRegle = {"X","Z"};
+	vector<string> variablesPred1 = {"X","Y"};
+	vector<string> variablesPred2 = {"Y","Z"};
+
 	vector < pair<string, vector<string>> > listPred;
 	listPred.push_back(make_pair("grand_pere",variablesRegle));
 	listPred.push_back(make_pair("pere",variablesPred1));
@@ -178,17 +239,15 @@ int main(int argc, char **argv) {
 
 	vector< vector < pair<string, vector<string>> >> regles;
 	regles.push_back(listPred);
-
-	regles.push_back(listPred);
 		
-		ofstream myfile;
+	ofstream myfile;
 	myfile.open ("example.cpp");
 
 	generateInclude(myfile);
 	generateClassObject(myfile);
 	generateClassVariable(myfile);
 	generateClassValue(myfile);
-	generateClassTuple(regles,myfile);
+	generateClassTuple(regles,genealogie,myfile);
 	generateVectorPredicat(genealogie, myfile);
 	generate_deduce(regles, myfile);
 
