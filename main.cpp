@@ -5,6 +5,7 @@
 #include <map>
 #include <fstream>
 #include <iostream>
+#include "ecriture.cpp"
 
 using namespace std;
 
@@ -159,5 +160,8 @@ int main(int argc, char **argv)
 	}
 
 	fichier.close();
+
+	Ecriture ecrire(listPredicat,listRegles);
+	
 	return 0;
 }
