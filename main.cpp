@@ -17,7 +17,7 @@ void readPredicat(string ligne)
 	pair<string, vector<vector<string>>> nouveauPredicat;
 	size_t debutArgs = ligne.find('(');
 
-	string nomPredicat = ligne.substr(0, debutArgs - 1);
+	string nomPredicat = ligne.substr(0, debutArgs);
 	for (pair<string, vector<vector<string>>> p : listPredicat)
 	{
 		if (!p.first.compare(nomPredicat))
@@ -74,16 +74,21 @@ void readRegle(string ligne)
 	{ // boucle jusqu'Ã  la fin de la ligne
 		pair<string, vector<string>> predicat;
 		size_t debutArgs = ligne.find('(', i);
-		string nomPredicat = ligne.substr(0, debutArgs - 1);
-
+		string nomPredicat = ligne.substr(i, debutArgs - i);
+		if(nomPredicat.find(":-") != string::npos){
+			nomPredicat=nomPredicat.substr(2);
+		}
+		if(nomPredicat.find(",") != string::npos){
+			nomPredicat=nomPredicat.substr(1);
+		}
 		predicat.first = nomPredicat;
 		size_t nextArg;
 		size_t finRegle = ligne.find(')', i);
-		string variablesBrutes = ligne.substr(debutArgs + 1, finRegle - i);
+		string variablesBrutes = ligne.substr(debutArgs + 1, finRegle - debutArgs-1);
 		int cptVarBrutes = 0;
+		vector<string> variables;
 		do
 		{
-			vector<string> variables;
 			nextArg = variablesBrutes.find(',', cptVarBrutes);
 			string arg = variablesBrutes.substr(cptVarBrutes, nextArg - cptVarBrutes);
 			cptVarBrutes = nextArg + 1;
@@ -133,10 +138,12 @@ int main(int argc, char **argv)
 		//cout<<p.first<<endl;
 		for (auto p2 : p)
 		{
+			cout <<p2.first;
 			for (string p3 : p2.second)
 			{
-				cout << " regle " << p2.first << " :" << p3 << ' ' << endl;
+				cout << " " << p3;
 			}
+			cout<<endl;
 		}
 	}
 

@@ -1,4 +1,4 @@
 touslesmots(bob,george,roger).
 dico(gilbert,montagné).
-touslesmots(ok,bommer).
-touslesmots(ok,bommer):-pere(X,Y),pere(Y,Z).
+touslesmots(ok,boomer).
+touslesmots(ok,boomer):-pere(X,Y),pere(Y,Z).
