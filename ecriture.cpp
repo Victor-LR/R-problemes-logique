@@ -22,37 +22,37 @@ void generateInclude(ofstream &file){
 void generateClassObject(ofstream &file){
 	file << "class Object {\n";
 	file << "public:\n";
-	
+
 	file << "\tstring value;\n\n";
-	
+
 	file << "\tObject() {\n";
 	file << "\t}\n\n";
-	
+
 	file << "\tObject(string v): value(v) {\n";
 	file << "\t}\n\n";
-	
+
 	file << "\tvirtual ~Object() {\n";
 	file << "\t}\n\n";
 
 	file << "\tvirtual int compare(const Object & obj) = 0;\n\n";
-	
+
 	file << "\tfriend bool operator==(const Object& obj1, const Object& obj2) {\n";
-	file << "\t\treturn const_cast<Object &>(obj1).compare(obj2) == 0;\n";	
+	file << "\t\treturn const_cast<Object &>(obj1).compare(obj2) == 0;\n";
 	file << "\t}\n\n";
-	
+
 	file << "\tfriend bool operator!=(const Object& obj1, const Object& obj2) {\n";
-	file << "\t\treturn const_cast<Object &>(obj1).compare(obj2) != 0;\n";	
+	file << "\t\treturn const_cast<Object &>(obj1).compare(obj2) != 0;\n";
 	file << "\t}\n\n";
-	
+
 	file << "};\n\n";
 }
 
 void generateClassVariable(ofstream &file){
 	file << "class Variable : public Object {\n";
 	file << "public:\n";
-	
+
 	file << "\tVariable(string name) : Object(name){ }\n\n";
-	
+
 	file << "\tint compare(const Object & obj) {\n";
 	file << "\t\treturn 0;\n";
 	file << "\t}\n\n";
@@ -63,9 +63,9 @@ void generateClassVariable(ofstream &file){
 void generateClassValue(ofstream &file){
 	file << "class Value : public Object {\n";
 	file << "public:\n";
-	
+
 	file << "\tValue(string identifier) : Object(identifier){}\n\n";
-	
+
 	file << "\tint compare(const Object & obj) {\n";
 	file << "\t\tValue * val = dynamic_cast<Value *>(&const_cast<Object &>(obj));\n";
 	file << "\t\tif(val == nullptr) {\n";
@@ -91,7 +91,7 @@ void generateVectorPredicat(vector<pair<string, vector<vector<string>>>> predica
 			file << nom + ".push_back(Tuple" << tuple_size << "(";
 			//parcour chaque string du nuplet (Jean)
 			for(int i = 0; i < nuplet.size(); i++){
-				file << "new Value("+nuplet.at(i)+")" << (i==nuplet.size()-1 ? "" : ",");
+				file << "new Value(\""+nuplet.at(i)+"\")" << (i==nuplet.size()-1 ? "" : ",");
 			}
 			file << "));\n";
 		}
@@ -225,13 +225,7 @@ int main(int argc, char **argv) {
 		couplesmeres.push_back(mariejean);
 		genealogie.push_back(make_pair("mere", couplesmeres));
 
-		string diese;
-
-
-	vector<string> variablesRegle = {"X","Z"};
-	vector<string> variablesPred1 = {"X","Y"};
-	vector<string> variablesPred2 = {"Y","Z"};
-
+		
 	vector < pair<string, vector<string>> > listPred;
 	listPred.push_back(make_pair("grand_pere",variablesRegle));
 	listPred.push_back(make_pair("pere",variablesPred1));
@@ -239,8 +233,10 @@ int main(int argc, char **argv) {
 
 	vector< vector < pair<string, vector<string>> >> regles;
 	regles.push_back(listPred);
-		
-	ofstream myfile;
+
+	regles.push_back(listPred);
+
+		ofstream myfile;
 	myfile.open ("example.cpp");
 
 	generateInclude(myfile);
