@@ -59,6 +59,7 @@ public:
 		generateClassValue(myfile);
 		generateClassTuple(listRegles,listPredicat,myfile);
 		generateVectorPredicat(listPredicat, myfile);
+		generateVectorRegle(listRegles, myfile);
 		generate_deduce(listRegles, myfile);
 		generateSolution(listPredicat,myfile);
 		generateMain(myfile);
@@ -120,6 +121,15 @@ public:
 				}
 				file << "));\n";
 			}*/
+		}
+		file << "\n";
+	}
+
+	void generateVectorRegle(vector<vector<pair<string, vector<string>>>> regles, ofstream &file){
+		for(auto r : regles){
+			auto nom = r.at(0).first;
+			auto tuple_size = r.at(0).second.size();
+			file << "list<Tuple" << tuple_size << "> " + nom + ";\n";
 		}
 		file << "\n";
 	}
@@ -237,7 +247,7 @@ public:
 				file << "));\n";
 			}
 		}
-		file << "};\n\n";
+		file << "}\n\n";
 	}
 
 	void generateMain(ofstream &file){
@@ -256,11 +266,12 @@ public:
 		auto nbpredicat = regle.size();
 		auto tuple_size = regle.at(0).second.size();;
 		file << "void " + nomRegle + "_deduce(){\n";
-
+		string tab = "\t";
 		for(int t = 1; t<regle.size(); t++){
 			auto predicat = regle.at(t);
 			string nomPredicat = predicat.first;
-			file << "\tfor(auto t" << t << " : " << nomPredicat << "){\n\t";
+			file << tab <<"for(auto t" << t << " : " << nomPredicat << "){\n";
+			tab += "\t";
 			int i = 0;
 			for(auto variable : predicat.second){ //pour chaque variable du predicat {X, Y, ...}
 				if(mapVariables.find(variable) == mapVariables.end()){
@@ -272,13 +283,16 @@ public:
 			}
 		}
 		//A FAIRE generer condition
-		file << "\tif(condition){\n";
-		file << "\t" + nomRegle + ".push_back(Tuple" << tuple_size << "(";
+		file << tab << "if(condition){\n";
+		file << tab << "\t" + nomRegle + ".push_back(Tuple" << tuple_size << "(";
 		//A MODIFIER utiliser mapVariables pour remplacer X par t1[0]
 		file << "tA[X], tB[Y]));\n";
-		file << "}";
+		file << tab << "}\n";
 		for(int i = 0; i<nbpredicat; i++){
-			file << "}\n";
+			string tab = "";
+			for (int t = i+1; t<nbpredicat; t++)
+				tab += "\t";
+			file << tab <<"}\n";
 		}
 	}
 	for(auto it = mapVariables.begin(); it != mapVariables.end(); it++){
