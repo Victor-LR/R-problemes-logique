@@ -8,6 +8,77 @@
 
 using namespace std;
 
+void generateInclude(ofstream &file){
+	string diese;
+	diese = (char)35;
+	file << diese+"include <unistd.h>\n"+
+			diese+"include <stdio.h>\n"+
+			diese+"include <stdlib.h>\n"+
+			diese+"include <iostream>\n"+
+			"using namespace std;\n\n";
+}
+
+void generateClassObject(ofstream &file){
+	file << "class Object {\n";
+	file << "public:\n";
+	
+	file << "\tstring value;\n\n";
+	
+	file << "\tObject() {\n";
+	file << "\t}\n\n";
+	
+	file << "\tObject(string v): value(v) {\n";
+	file << "\t}\n\n";
+	
+	file << "\tvirtual ~Object() {\n";
+	file << "\t}\n\n";
+
+	file << "\tvirtual int compare(const Object & obj) = 0;\n\n";
+	
+	file << "\tfriend bool operator==(const Object& obj1, const Object& obj2) {\n";
+	file << "\t\treturn const_cast<Object &>(obj1).compare(obj2) == 0;\n";	
+	file << "\t}\n\n";
+	
+	file << "\tfriend bool operator!=(const Object& obj1, const Object& obj2) {\n";
+	file << "\t\treturn const_cast<Object &>(obj1).compare(obj2) != 0;\n";	
+	file << "\t}\n\n";
+	
+	file << "};\n\n";
+}
+
+void generateClassVariable(ofstream &file){
+	file << "class Variable : public Object {\n";
+	file << "public:\n";
+	
+	file << "\tVariable(string name) : Object(name){ }\n\n";
+	
+	file << "\tint compare(const Object & obj) {\n";
+	file << "\t\treturn 0;\n";
+	file << "\t}\n\n";
+
+	file << "};\n\n";
+}
+
+void generateClassValue(ofstream &file){
+	file << "class Value : public Object {\n";
+	file << "public:\n";
+	
+	file << "\tValue(string identifier) : Object(identifier){}\n\n";
+	
+	file << "\tint compare(const Object & obj) {\n";
+	file << "\t\tValue * val = dynamic_cast<Value *>(&const_cast<Object &>(obj));\n";
+	file << "\t\tif(val == nullptr) {\n";
+	file << "\t\t\treturn 0;\n";
+	file << "\t\t} else {\n";
+	file << "\t\t\tif (value == val->value) return 0;\n";
+	file << "\t\t\treturn 1;\n";
+	file << "\t\t}\n";
+	file << "\t\treturn 0;\n";
+	file << "\t}\n\n";
+
+	file << "};\n\n";
+}
+
 void generateVectorPredicat(vector<pair<string, vector<vector<string>>>> predicat, ofstream &file){
 	//parcour de chaque paire (nom, liste(liste(string)))
 	for(auto p : predicat){
@@ -66,7 +137,7 @@ int main(int argc, char **argv) {
 		couplesmeres.push_back(mariejean);
 		genealogie.push_back(make_pair("mere", couplesmeres));
 
-		string diese;
+		
 	vector < pair<string, vector<string>> > listPred;
 	listPred.push_back(make_pair("grand_pere",variablesRegle));
 	listPred.push_back(make_pair("pere",variablesPred1));
@@ -75,16 +146,14 @@ int main(int argc, char **argv) {
 	vector< vector < pair<string, vector<string>> >> regles;
 
 	regles.push_back(listPred);
-		diese = (char)35;
 		
-		cout << diese << '\n';
 		ofstream myfile;
 	myfile.open ("example.cpp");
-	myfile << diese+"include <unistd.h>\n"+
-		diese+"include <stdio.h>\n"+
-		diese+"include <stdlib.h>\n"+
-		diese+"include <iostream>\n"+"\n";
 
+	generateInclude(myfile);
+	generateClassObject(myfile);
+	generateClassVariable(myfile);
+	generateClassValue(myfile);
 	generateClassTuple(regles,myfile);
 	generateVectorPredicat(genealogie, myfile);
 	
