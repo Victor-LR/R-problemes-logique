@@ -288,7 +288,13 @@ public:
 		file << tab << "if(condition){\n";
 		file << tab << "\t" + nomRegle + ".push_back(Tuple" << tuple_size << "(";
 		//A MODIFIER utiliser mapVariables pour remplacer X par t1[0]
-		file << "tA[X], tB[Y]));\n";
+		for(int i = 0; i<variablesRegle.size(); i++){
+			auto it = mapVariables.find(variablesRegle.at(i));
+			if(it != mapVariables.end()){
+				file << it->second.first << "[" << it->second.second << "]" << (i==variablesRegle.size() - 1 ? "" : ",");
+			}
+		}
+		file << "));\n";
 		file << tab << "}\n";
 		for(int i = 0; i<nbpredicat; i++){
 			string tab = "";
