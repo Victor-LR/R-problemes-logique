@@ -260,7 +260,7 @@ public:
 
 
 	void generate_deduce(vector< vector < pair<string, vector<string>> >> regles,  ofstream & file){
-	map<string, pair<string, int>> mapVariables;
+	multimap<string, pair<string, int>> mapVariables;
 
 	for(auto regle : regles){
 		string nomRegle = regle.at(0).first;
@@ -276,18 +276,25 @@ public:
 			tab += "\t";
 			int i = 0;
 			for(auto variable : predicat.second){ //pour chaque variable du predicat {X, Y, ...}
-				// if(mapVariables.find(variable) == mapVariables.end()){
 					string tString = "t"+to_string(t);
-					pair<string, pair<string,int>> p  = make_pair(variable, make_pair(tString, i));
-					mapVariables.insert(p);
-				// }
+					mapVariables.insert(make_pair(variable, make_pair(tString, i)));
 				i++;
 			}
 		}
-		//A FAIRE generer condition
-		file << tab << "if(condition){\n";
+		tab += "\t";
+		//A TERMINER ne pas comparer dans les 2 sens (fonctionne quand meme)
+		for(auto v1 : mapVariables){
+			for(auto v2 : mapVariables){
+				if((v1.first == v2.first) && (v1.second.first != v2.second.first)){
+					file << tab;
+					file << "if(" << v1.second.first << ".x" << v1.second.second + 1 << "()";
+					file << " != " << v2.second.first << ".x" << v2.second.second +1 << "()";
+					file << ") continue;\n";
+				}
+			}
+		}
 		file << tab << "\t" + nomRegle + ".push_back(Tuple" << tuple_size << "(";
-		//A MODIFIER utiliser mapVariables pour remplacer X par t1[0]
+
 		for(int i = 0; i<variablesRegle.size(); i++){
 			auto it = mapVariables.find(variablesRegle.at(i));
 			if(it != mapVariables.end()){
@@ -295,7 +302,6 @@ public:
 			}
 		}
 		file << "));\n";
-		file << tab << "}\n";
 		for(int i = 0; i<nbpredicat; i++){
 			string tab = "";
 			for (int t = i+1; t<nbpredicat; t++)
@@ -303,10 +309,11 @@ public:
 			file << tab <<"}\n";
 		}
 	}
-	for(auto it = mapVariables.begin(); it != mapVariables.end(); it++){
-		string t =it->second.first;
-		std::cout << it->first << "->" << t << "[" << it->second.second << "]" <<  '\n';
-	}
+	//afichage map
+	// for(auto it = mapVariables.begin(); it != mapVariables.end(); it++){
+	// 	string t =it->second.first;
+	// 	std::cout << it->first << "->" << t << "[" << it->second.second << "]" <<  '\n';
+	// }
 }
 
 
