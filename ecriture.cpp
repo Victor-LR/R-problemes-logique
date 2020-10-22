@@ -292,9 +292,11 @@ public:
 
 
 	void generate_deduce(vector< vector < pair<string, vector<string>> >> regles,  ofstream & file){
-	multimap<string, pair<string, int>> mapVariables;
+	
 
 	for(auto regle : regles){
+		multimap<string, pair<string, int>> mapVariables;
+
 		string nomRegle = regle.at(0).first;
 		auto variablesRegle = regle.at(0).second;
 		auto nbpredicat = regle.size();
@@ -345,12 +347,14 @@ public:
 				tab += "\t";
 			file << tab <<"}\n";
 		}
+		//afichage map
+		// for(auto it = mapVariables.begin(); it != mapVariables.end(); it++){
+		// 	string t =it->second.first;
+		// 	std::cout << it->first << "->" << t << "[" << it->second.second << "]" <<  '\n';
+		// 	}
 	}
-	//afichage map
-	// for(auto it = mapVariables.begin(); it != mapVariables.end(); it++){
-	// 	string t =it->second.first;
-	// 	std::cout << it->first << "->" << t << "[" << it->second.second << "]" <<  '\n';
-	// }
+	
+
 }
 
 
