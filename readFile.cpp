@@ -36,6 +36,7 @@ void readPredicat(string ligne)
         return;
     }
     string nomPredicat = ligne.substr(0, debutArgs);
+    nomPredicat = trim(nomPredicat);
     for (pair<string, vector<vector<string>>> p : listPredicat)
     {
         if (!p.first.compare(nomPredicat))
@@ -126,10 +127,12 @@ void readRegle(string ligne)
         if (nomPredicat.find(":-") != string::npos)
         {
             nomPredicat = nomPredicat.substr(2);
+            nomPredicat = trim(nomPredicat);
         }
         if (nomPredicat.find(",") != string::npos)
         {
             nomPredicat = nomPredicat.substr(1);
+            nomPredicat = trim(nomPredicat);
         }
         predicat.first = nomPredicat;
         size_t nextArg;
