@@ -9,6 +9,24 @@ using namespace std;
 vector<pair<string, vector<vector<string>>>> listPredicat;
 vector<vector<pair<string, vector<string>>>> listRegles; //la première paire est le nom de la regle
 
+std::string& ltrim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
+{
+    str.erase(0, str.find_first_not_of(chars));
+    return str;
+}
+ 
+std::string& rtrim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
+{
+    str.erase(str.find_last_not_of(chars) + 1);
+    return str;
+}
+ 
+std::string& trim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
+{
+    cout << "TRIM"<< endl;
+    return ltrim(rtrim(str, chars), chars);
+}
+
 void readPredicat(string ligne)
 {
     bool newPredicat = true; //cas ou regle non existante
@@ -39,11 +57,11 @@ void readPredicat(string ligne)
         { // pas de vigule trouvee, on en est au dernier argument
             nextArg = ligne.find(')', i);
             string arg = ligne.substr(i, nextArg - i);
-            variables.push_back(arg);
+            variables.push_back(trim(arg));
             break;
         }
         string arg = ligne.substr(i, nextArg - i);
-        variables.push_back(arg);
+        variables.push_back(trim(arg));
         i = nextArg + 1;
     }
     nouveauPredicat.second.push_back(variables);
@@ -94,7 +112,7 @@ void readRegle(string ligne)
             nextArg = variablesBrutes.find(',', cptVarBrutes);
             string arg = variablesBrutes.substr(cptVarBrutes, nextArg - cptVarBrutes);
             cptVarBrutes = nextArg + 1;
-            variables.push_back(arg);
+            variables.push_back(trim(arg));
             predicat.second = variables;
         } while (nextArg != string::npos);
         nouvelleRegle.push_back(predicat);
