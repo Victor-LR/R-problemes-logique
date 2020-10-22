@@ -318,10 +318,15 @@ public:
 		for(auto v1 : mapVariables){
 			for(auto v2 : mapVariables){
 				if((v1.first == v2.first) && (v1.second.first != v2.second.first)){
-					file << tab;
-					file << "if(" << v1.second.first << ".x" << v1.second.second + 1 << "()";
-					file << " != " << v2.second.first << ".x" << v2.second.second +1 << "()";
-					file << ") continue;\n";
+					int v1nombre = stoi((v1.second.first).substr(1,1));
+					int v2nombre = stoi((v2.second.first).substr(1,1));
+					//Suppression des doublons dans les conditions 
+					if (v1nombre < v2nombre){
+						file << tab;
+						file << "if(" << v1.second.first << ".x" << v1.second.second + 1 << "()";
+						file << " != " << v2.second.first << ".x" << v2.second.second +1 << "()";
+						file << ") continue;\n";
+					}
 				}
 			}
 		}
