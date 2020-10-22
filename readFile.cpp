@@ -82,6 +82,37 @@ void readPredicat(string ligne)
     }
 }
 
+bool contains(vector<pair<string, vector<string>>> v, string regle)
+{
+    for (auto it : v)
+    {
+        if (!it.first.compare(regle))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void sortRegles()
+{
+    vector<string> regleExiste;
+    for (int it1 = 0; it1<listRegles.size();it1++ )
+    {
+        for (int it2 = it1 +1 ; it2<listRegles.size();it2++ )
+        {
+                //listRegles[it2][0] 0 car il n'y a que le nom de la règle qui nous interesse
+                if (contains(listRegles[it1], listRegles[it2][0].first)) 
+                {
+                    vector<pair<string, vector<string>>> tmp;
+                    tmp = listRegles[it1];
+                    listRegles[it1] = listRegles[it2];
+                    listRegles[it2] = tmp;
+                }
+        }
+    }
+}
+
 void readRegle(string ligne)
 {
     bool newRegle = true; //cas ou regle non existante
@@ -123,6 +154,8 @@ void readRegle(string ligne)
         }
     }
     listRegles.push_back(nouvelleRegle);
+    //mettre les regles dans le bon ordre pour l'execution
+    sortRegles();
 }
 
 void read(string fileName)
