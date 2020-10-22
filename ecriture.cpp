@@ -272,14 +272,16 @@ public:
 			}
 		}
 		//Affichage
+		file << "\tcout << \" Listes des prédicats : \"<< endl;\n";
 		for(auto p : predicats){
 			auto nom = p.first;
-			file << "\tcout <<\" "<< nom <<"=\"; print("<< nom <<");cout << endl;\n";
+			file << "\tcout <<\" "<< nom <<" =\"; print("<< nom <<");cout << endl;\n";
 		}
+		file << "\n\tcout << \" Solutions pour toutes les règles :\"<< endl;\n";
 		for(auto r1 : regles){
 			auto nom = r1.at(0).first;
 			file << "\t"<< nom <<"_deduce();\n";
-			file << "\tcout <<\""<< nom << "=\";print("<< nom <<");cout << endl;\n";
+			file << "\tcout <<\""<< nom << " =\";print("<< nom <<");cout << endl;\n";
 		}
 		file << "}\n\n";
 	}
