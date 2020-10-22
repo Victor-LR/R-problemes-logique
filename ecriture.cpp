@@ -16,40 +16,6 @@ public:
 
 		Ecriture(vector<pair<string, vector<vector<string>>>> listPredicat, vector<vector<pair<string, vector<string>>>> listRegles){
 
-		// // TEST
-		// vector<pair<string, vector<vector<string>>>> genealogie;
-		// vector<string> michjean;
-		// michjean.push_back("Michel");
-		// michjean.push_back("Jean");
-		// vector<string> pierrepaul;
-		// pierrepaul.push_back("Pierre");
-		// pierrepaul.push_back("Paul");
-
-		// vector<vector<string>> couplesperes;
-		// couplesperes.push_back(michjean);
-		// couplesperes.push_back(pierrepaul);
-		// genealogie.push_back(make_pair("pere", couplesperes));
-
-		// vector<string> mariejean;
-		// mariejean.push_back("Marie");
-		// mariejean.push_back("Jean");
-		// vector<vector<string>> couplesmeres;
-		// couplesmeres.push_back(mariejean);
-		// genealogie.push_back(make_pair("mere", couplesmeres));
-
-		// vector<string> variablesRegle = {"X","Z"};
-		// vector<string> variablesPred1 = {"X","Y"};
-		// vector<string> variablesPred2 = {"Y","Z"};
-
-		// vector < pair<string, vector<string>> > listPred;
-		// listPred.push_back(make_pair("grand_pere",variablesRegle));
-		// listPred.push_back(make_pair("pere",variablesPred1));
-		// listPred.push_back(make_pair("pere",variablesPred2));
-
-		// vector< vector < pair<string, vector<string>> >> regles;
-		// regles.push_back(listPred);
-		// //FIN TEST
-
 		ofstream myfile;
 		myfile.open ("example.cpp");
 
@@ -124,15 +90,6 @@ public:
 			auto nom = p.first;
 			auto tuple_size = p.second.at(0).size();
 			file << "list<Tuple" << tuple_size << "> " + nom + ";\n";
-			//parcour de la liste de n-uplets {(Michel,Jean), (Pierre, Paul), ....}
-			/* for(auto nuplet : p.second){
-				file << nom + ".push_back(Tuple" << tuple_size << "(";
-				//parcour chaque string du nuplet (Jean)
-				for(int i = 0; i < nuplet.size(); i++){
-					file << "new Value(\""+nuplet.at(i)+"\")" << (i==nuplet.size()-1 ? "" : ",");
-				}
-				file << "));\n";
-			}*/
 		}
 		file << "\n";
 	}
@@ -294,70 +251,59 @@ public:
 
 
 	void generate_deduce(vector< vector < pair<string, vector<string>> >> regles,  ofstream & file){
+		for(auto regle : regles){
+			multimap<string, pair<string, int>> mapVariables;
 
-
-	for(auto regle : regles){
-		multimap<string, pair<string, int>> mapVariables;
-
-		string nomRegle = regle.at(0).first;
-		auto variablesRegle = regle.at(0).second;
-		auto nbpredicat = regle.size();
-		auto tuple_size = regle.at(0).second.size();;
-		file << "void " + nomRegle + "_deduce(){\n";
-		string tab = "\t";
-		for(int t = 1; t<regle.size(); t++){
-			auto predicat = regle.at(t);
-			string nomPredicat = predicat.first;
-			file << tab <<"for(auto t" << t << " : " << nomPredicat << "){\n";
-			tab += "\t";
-			int i = 0;
-			for(auto variable : predicat.second){ //pour chaque variable du predicat {X, Y, ...}
-					string tString = "t"+to_string(t);
-					mapVariables.insert(make_pair(variable, make_pair(tString, i)));
-				i++;
+			string nomRegle = regle.at(0).first;
+			auto variablesRegle = regle.at(0).second;
+			auto nbpredicat = regle.size();
+			auto tuple_size = regle.at(0).second.size();;
+			file << "void " + nomRegle + "_deduce(){\n";
+			string tab = "\t";
+			for(int t = 1; t<regle.size(); t++){
+				auto predicat = regle.at(t);
+				string nomPredicat = predicat.first;
+				file << tab <<"for(auto t" << t << " : " << nomPredicat << "){\n";
+				tab += "\t";
+				int i = 0;
+				for(auto variable : predicat.second){ //pour chaque variable du predicat {X, Y, ...}
+						string tString = "t"+to_string(t);
+						mapVariables.insert(make_pair(variable, make_pair(tString, i)));
+					i++;
+				}
 			}
-		}
-		tab += "\t";
-		for(auto v1 : mapVariables){
-			for(auto v2 : mapVariables){
-				if((v1.first == v2.first) && (v1.second.first != v2.second.first)){
-					int v1nombre = stoi((v1.second.first).substr(1,1));
-					int v2nombre = stoi((v2.second.first).substr(1,1));
-					//Suppression des doublons dans les conditions
-					if (v1nombre < v2nombre){
-						file << tab;
-						file << "if(" << v1.second.first << ".x" << v1.second.second + 1 << "()";
-						file << " != " << v2.second.first << ".x" << v2.second.second +1 << "()";
-						file << ") continue;\n";
+			tab += "\t";
+			for(auto v1 : mapVariables){
+				for(auto v2 : mapVariables){
+					if((v1.first == v2.first) && (v1.second.first != v2.second.first)){
+						int v1nombre = stoi((v1.second.first).substr(1,1));
+						int v2nombre = stoi((v2.second.first).substr(1,1));
+						//Suppression des doublons dans les conditions
+						if (v1nombre < v2nombre){
+							file << tab;
+							file << "if(" << v1.second.first << ".x" << v1.second.second + 1 << "()";
+							file << " != " << v2.second.first << ".x" << v2.second.second +1 << "()";
+							file << ") continue;\n";
+						}
 					}
 				}
 			}
-		}
-		file << tab << "\t" + nomRegle + ".push_back(Tuple" << tuple_size << "(";
+			file << tab << "\t" + nomRegle + ".push_back(Tuple" << tuple_size << "(";
 
-		for(int i = 0; i<variablesRegle.size(); i++){
-			auto it = mapVariables.find(variablesRegle.at(i));
-			if(it != mapVariables.end()){
-				file << it->second.first << "[" << it->second.second << "]" << (i==variablesRegle.size() - 1 ? "" : ",");
+			for(int i = 0; i<variablesRegle.size(); i++){
+				auto it = mapVariables.find(variablesRegle.at(i));
+				if(it != mapVariables.end()){
+					file << it->second.first << "[" << it->second.second << "]" << (i==variablesRegle.size() - 1 ? "" : ",");
+				}
+			}
+			file << "));\n";
+			for(int i = 0; i<nbpredicat; i++){
+				string tab = "";
+				for (int t = i+1; t<nbpredicat; t++)
+					tab += "\t";
+				file << tab <<"}\n";
 			}
 		}
-		file << "));\n";
-		for(int i = 0; i<nbpredicat; i++){
-			string tab = "";
-			for (int t = i+1; t<nbpredicat; t++)
-				tab += "\t";
-			file << tab <<"}\n";
-		}
-		//afichage map
-		// for(auto it = mapVariables.begin(); it != mapVariables.end(); it++){
-		// 	string t =it->second.first;
-		// 	std::cout << it->first << "->" << t << "[" << it->second.second << "]" <<  '\n';
-		// 	}
 	}
-
-
-}
-
-
 
 };

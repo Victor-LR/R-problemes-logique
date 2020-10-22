@@ -9,6 +9,7 @@ using namespace std;
 vector<pair<string, vector<vector<string>>>> listPredicat;
 vector<vector<pair<string, vector<string>>>> listRegles; //la première paire est le nom de la regle
 
+//Suppression des espaces
 std::string& ltrim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
 {
     str.erase(0, str.find_first_not_of(chars));
@@ -26,6 +27,7 @@ std::string& trim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
     return ltrim(rtrim(str, chars), chars);
 }
 
+//Lecture des prédicats
 void readPredicat(string ligne)
 {
     bool newPredicat = true; //cas ou regle non existante
@@ -50,11 +52,13 @@ void readPredicat(string ligne)
     int i = debutArgs + 1;
     vector<string> variables;
     while (i < ligne.length())
-    { // boucle jusqu'Ã  la fin de la ligne
+    { 
+        // boucle jusqu'Ã  la fin de la ligne
         size_t nextArg = ligne.find(',', i);
 
         if (nextArg == string::npos)
-        { // pas de vigule trouvee, on en est au dernier argument
+        {
+            // pas de vigule trouvee, on en est au dernier argument
             nextArg = ligne.find(')', i);
             string arg = ligne.substr(i, nextArg - i);
             variables.push_back(trim(arg));
@@ -120,7 +124,8 @@ void readRegle(string ligne)
 
     int i = 0;
     while (i < ligne.length())
-    { // boucle jusqu'Ã  la fin de la ligne
+    { 
+        // boucle jusqu'Ã  la fin de la ligne
         pair<string, vector<string>> predicat;
         size_t debutArgs = ligne.find('(', i);
         string nomPredicat = ligne.substr(i, debutArgs - i);
@@ -182,29 +187,5 @@ void read(string fileName)
             readPredicat(ligne);
         }
     }
-    // for (pair<string, vector<vector<string>>> p : listPredicat)
-    // {
-    // 	for (vector<string> p2 : p.second)
-    // 	{
-    // 		for (string p3 : p2)
-    // 		{
-    // 			        cout <<p.first <<" :" << p3 << endl;
-    // 		}
-    // 	}
-    // }
-    // for (auto p : listRegles)
-    // {
-
-    // 	for (auto p2 : p)
-    // 	{
-    // 		cout << p2.first;
-    // 		for (string p3 : p2.second)
-    // 		{
-    // 			cout << " " << p3;
-    // 		}
-    // 		cout << endl;
-    // 	}
-    // }
-
     fichier.close();
 }
