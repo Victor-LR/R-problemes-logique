@@ -54,6 +54,7 @@ public:
 		myfile.open ("example.cpp");
 
 		generateInclude(myfile);
+		generatePrint(myfile);
 		generateClassObject(myfile);
 		generateClassVariable(myfile);
 		generateClassValue(myfile);
@@ -61,7 +62,7 @@ public:
 		generateVectorPredicat(listPredicat, myfile);
 		generateVectorRegle(listRegles, myfile);
 		generate_deduce(listRegles, myfile);
-		generateSolution(listPredicat,myfile);
+		generateSolution(listRegles,listPredicat,myfile);
 		generateMain(myfile);
 		cout<<"Le fichier a été généré"<<endl;
 		myfile.close();
@@ -76,6 +77,16 @@ public:
 				diese+"include <iostream>\n"+
 				diese+"include <list>\n"+
 				"using namespace std;\n\n";
+	}
+
+	void generatePrint(ofstream &file){
+		file << "template<class Container>\n";
+		file << "void print(Container &c) {\n";
+		file << "\tfor(auto e : c) {\n";
+		file << "\t\tcout << \"\\t\" << e << endl;\n";
+		file << "\t}\n";
+		file << "\tcout << endl;\n";
+		file << "}\n\n";
 	}
 
 	void generateClassObject(ofstream &file){
@@ -226,15 +237,26 @@ public:
 			file << "\tObject *operator[](int n) {\n"
 				<< " \t\treturn object[n];\n\t}\n";
 
+			//Operator <<
+			file << "\tfriend ostream& operator <<(ostream &out, Tuple" << nombreArg << " &obj) {\n"
+			<< " \t\tout << \"(\" << ";
+			for(int i = 0; i < nombreArg - 1 ; i++){
+				file << "obj[" << i << "] -> value << \",\" <<";
+			}
+			file << "obj[" << nombreArg - 1 << "] -> value << ";
+			file << "\")\";";
+			file <<"\n\t\treturn out;";
+			file << "}\n";
 
 
 			file << "\n};\n\n";
 
 		}
+
 	}
 
 	//remplissage des listes de tuples crees par generateVectorPredicat
-	void generateSolution(vector<pair<string, vector<vector<string>>>> predicats, ofstream & file){
+	void generateSolution(vector<vector <pair<string, vector<string>>>> regles, vector<pair<string, vector<vector<string>>>> predicats, ofstream & file){
 		file << "void solution(){\n";
 		for(auto p : predicats){
 			auto nom = p.first;
@@ -248,6 +270,16 @@ public:
 				}
 				file << "));\n";
 			}
+		}
+		//Affichage
+		for(auto p : predicats){
+			auto nom = p.first;
+			file << "\tcout <<\" "<< nom <<"=\"; print("<< nom <<");cout << endl;\n";
+		}
+		for(auto r1 : regles){
+			auto nom = r1.at(0).first;
+			file << "\t"<< nom <<"_deduce();\n";
+			file << "\tcout <<\""<< nom << "=\";print("<< nom <<");cout << endl;\n";
 		}
 		file << "}\n\n";
 	}
