@@ -72,7 +72,7 @@ void readPredicat(string ligne)
     {
         for (auto &p : listPredicat)
         {
-            if ((p.first.compare(nouveauPredicat.first)) == 0)
+            if (!(p.first.compare(nouveauPredicat.first)))
             {
                 p.second.push_back(variables);
                 break;
@@ -83,9 +83,8 @@ void readPredicat(string ligne)
 
 bool contains(vector<pair<string, vector<string>>> v, string regle)
 {
-    for (auto it : v)
-    {
-        if (!it.first.compare(regle))
+    for (int it = 1 ; it<v.size();it++ )    {
+        if (v[it].first.compare(regle))
         {
             return true;
         }
@@ -103,6 +102,8 @@ void sortRegles()
                 //listRegles[it2][0] 0 car il n'y a que le nom de la règle qui nous interesse
                 if (contains(listRegles[it1], listRegles[it2][0].first)) 
                 {
+                    
+                    cout<<"On inverse "<<listRegles[it2][0].first<<endl;
                     vector<pair<string, vector<string>>> tmp;
                     tmp = listRegles[it1];
                     listRegles[it1] = listRegles[it2];
