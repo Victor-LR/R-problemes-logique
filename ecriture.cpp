@@ -294,7 +294,7 @@ public:
 
 
 	void generate_deduce(vector< vector < pair<string, vector<string>> >> regles,  ofstream & file){
-	
+
 
 	for(auto regle : regles){
 		multimap<string, pair<string, int>> mapVariables;
@@ -318,13 +318,12 @@ public:
 			}
 		}
 		tab += "\t";
-		//A TERMINER ne pas comparer dans les 2 sens (fonctionne quand meme)
 		for(auto v1 : mapVariables){
 			for(auto v2 : mapVariables){
 				if((v1.first == v2.first) && (v1.second.first != v2.second.first)){
 					int v1nombre = stoi((v1.second.first).substr(1,1));
 					int v2nombre = stoi((v2.second.first).substr(1,1));
-					//Suppression des doublons dans les conditions 
+					//Suppression des doublons dans les conditions
 					if (v1nombre < v2nombre){
 						file << tab;
 						file << "if(" << v1.second.first << ".x" << v1.second.second + 1 << "()";
@@ -355,7 +354,7 @@ public:
 		// 	std::cout << it->first << "->" << t << "[" << it->second.second << "]" <<  '\n';
 		// 	}
 	}
-	
+
 
 }
 
