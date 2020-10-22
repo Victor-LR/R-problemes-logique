@@ -23,7 +23,6 @@ std::string& rtrim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
  
 std::string& trim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
 {
-    cout << "TRIM"<< endl;
     return ltrim(rtrim(str, chars), chars);
 }
 
