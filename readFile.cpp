@@ -14,13 +14,13 @@ std::string& ltrim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
     str.erase(0, str.find_first_not_of(chars));
     return str;
 }
- 
+
 std::string& rtrim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
 {
     str.erase(str.find_last_not_of(chars) + 1);
     return str;
 }
- 
+
 std::string& trim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
 {
     return ltrim(rtrim(str, chars), chars);
@@ -72,7 +72,7 @@ void readPredicat(string ligne)
     {
         for (auto &p : listPredicat)
         {
-            if (!(p.first.compare(nouveauPredicat.first)))
+            if ((p.first.compare(nouveauPredicat.first)) == 0)
             {
                 p.second.push_back(variables);
                 break;
@@ -83,8 +83,9 @@ void readPredicat(string ligne)
 
 bool contains(vector<pair<string, vector<string>>> v, string regle)
 {
-    for (int it = 1 ; it<v.size();it++ )    {
-        if (v[it].first.compare(regle))
+    for (auto it : v)
+    {
+        if (!it.first.compare(regle))
         {
             return true;
         }
@@ -100,10 +101,8 @@ void sortRegles()
         for (int it2 = it1 +1 ; it2<listRegles.size();it2++ )
         {
                 //listRegles[it2][0] 0 car il n'y a que le nom de la règle qui nous interesse
-                if (contains(listRegles[it1], listRegles[it2][0].first)) 
+                if (contains(listRegles[it1], listRegles[it2][0].first))
                 {
-                    
-                    cout<<"On inverse "<<listRegles[it2][0].first<<endl;
                     vector<pair<string, vector<string>>> tmp;
                     tmp = listRegles[it1];
                     listRegles[it1] = listRegles[it2];
