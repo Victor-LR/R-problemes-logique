@@ -27,15 +27,23 @@ std::string& trim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
     return ltrim(rtrim(str, chars), chars);
 }
 
+void analyseVariable(string s){
+    size_t test = s.find("(");
+    if (test != string::npos)
+    {
+        throw string("Error: Arguments dans la règle non correctes dans le fichier .pl");
+    }
+}
+
 //Lecture des prédicats
-void readPredicat(string ligne)
+bool readPredicat(string ligne)
 {
     bool newPredicat = true; //cas ou regle non existante
     pair<string, vector<vector<string>>> nouveauPredicat;
     size_t debutArgs = ligne.find('(');
     if (debutArgs == string::npos)
     {
-        return;
+        return false;
     }
     string nomPredicat = ligne.substr(0, debutArgs);
     nomPredicat = trim(nomPredicat);
@@ -65,6 +73,16 @@ void readPredicat(string ligne)
             break;
         }
         string arg = ligne.substr(i, nextArg - i);
+        try
+        {
+            analyseVariable(arg);
+        }
+        catch(string const & e)
+        {
+            cerr << e <<'\n';
+            return false;
+        }
+        
         variables.push_back(trim(arg));
         i = nextArg + 1;
     }
@@ -84,6 +102,7 @@ void readPredicat(string ligne)
             }
         }
     }
+    return true;
 }
 
 bool contains(vector<pair<string, vector<string>>> v, string regle)
@@ -114,14 +133,6 @@ void sortRegles()
                     listRegles[it2] = tmp;
                 }
         }
-    }
-}
-
-void analyseVariable(string s){
-    size_t test = s.find("(");
-    if (test != string::npos)
-    {
-        throw string("Error: Arguments dans la règle non correcte ");
     }
 }
 
