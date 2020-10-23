@@ -20,8 +20,8 @@ int main(int argc, char **argv)
 		fileName = argv[1];
 	}
 
-	read(fileName);
-	Ecriture ecrire(fileName, listPredicat, listRegles);
-
+	if(read(fileName))
+		Ecriture ecrire(fileName, listPredicat, listRegles);
+	
 	return 0;
 }

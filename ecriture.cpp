@@ -29,7 +29,7 @@ public:
 		generateVectorPredicat(listPredicat, myfile);
 		generateVectorRegle(listRegles, myfile);
 		generate_deduce(listRegles, myfile);
-		generateSolution(listRegles,listPredicat,myfile);
+		generateDeduction(listRegles,listPredicat,myfile);
 		generateMain(myfile);
 		cout<<"Le fichier a été généré"<<endl;
 		myfile.close();
@@ -215,8 +215,8 @@ public:
 	}
 
 	//remplissage des listes de tuples crees par generateVectorPredicat
-	void generateSolution(vector<vector <pair<string, vector<string>>>> regles, vector<pair<string, vector<vector<string>>>> predicats, ofstream & file){
-		file << "void solution(){\n";
+	void generateDeduction(vector<vector <pair<string, vector<string>>>> regles, vector<pair<string, vector<vector<string>>>> predicats, ofstream & file){
+		file << "void deduction(){\n";
 		for(auto p : predicats){
 			auto nom = p.first;
 			auto tuple_size = p.second.at(0).size();
@@ -236,7 +236,7 @@ public:
 			auto nom = p.first;
 			file << "\tcout <<\""<< nom <<" =\\n\" << " << nom << " << endl;\n";
 		}
-		file << "\n\tcout << \"Solutions pour toutes les règles :\"<< endl;\n";
+		file << "\n\tcout << \"Déductions pour toutes les règles :\"<< endl;\n";
 		for(auto r1 : regles){
 			auto nom = r1.at(0).first;
 			file << "\t"<< nom <<"_deduce();\n";
@@ -247,7 +247,7 @@ public:
 
 	void generateMain(ofstream &file){
 		file << "int main(int argc, char **argv){\n";
-		file << "\tsolution();\n";
+		file << "\tdeduction();\n";
 		file << "};\n\n";
 	}
 

@@ -117,11 +117,20 @@ void sortRegles()
     }
 }
 
-void readRegle(string ligne)
+void analyseVariable(string s){
+    size_t test = s.find("(");
+    if (test != string::npos)
+    {
+        throw string("Error: Arguments dans la règle non correcte ");
+    }
+}
+
+bool readRegle(string ligne)
 {
     bool newRegle = true; //cas ou regle non existante
     vector<pair<string, vector<string>>> nouvelleRegle;
-
+    string variablesBrutes;
+    bool erreur = false;
     int i = 0;
     while (i < ligne.length())
     { 
@@ -142,36 +151,45 @@ void readRegle(string ligne)
         predicat.first = nomPredicat;
         size_t nextArg;
         size_t finRegle = ligne.find(')', i);
-        string variablesBrutes = ligne.substr(debutArgs + 1, finRegle - debutArgs - 1);
+        variablesBrutes = ligne.substr(debutArgs + 1, finRegle - debutArgs - 1);
         int cptVarBrutes = 0;
-        vector<string> variables;
-        do
-        {
-            nextArg = variablesBrutes.find(',', cptVarBrutes);
-            string arg = variablesBrutes.substr(cptVarBrutes, nextArg - cptVarBrutes);
-            cptVarBrutes = nextArg + 1;
-            variables.push_back(trim(arg));
-            predicat.second = variables;
-        } while (nextArg != string::npos);
-        nouvelleRegle.push_back(predicat);
-        i = finRegle + 1;
-        if (ligne.find(".") == i)
-        {
-            break;
+        try{
+            analyseVariable(variablesBrutes);
+            vector<string> variables;
+            do
+            {
+                nextArg = variablesBrutes.find(',', cptVarBrutes);
+                string arg = variablesBrutes.substr(cptVarBrutes, nextArg - cptVarBrutes);
+                cptVarBrutes = nextArg + 1;
+                variables.push_back(trim(arg));
+                predicat.second = variables;
+            } while (nextArg != string::npos);
+            nouvelleRegle.push_back(predicat);
+            i = finRegle + 1;
+            if (ligne.find(".") == i)
+            {
+                break;
+            }
         }
+        catch (string const &s){
+            cerr<< s << endl;
+            return false;
+        }
+        // analyseVariable(variablesBrutes);
     }
     listRegles.push_back(nouvelleRegle);
     //mettre les regles dans le bon ordre pour l'execution
     sortRegles();
+    return true;
 }
 
-void read(string fileName)
+bool read(string fileName)
 {
     ifstream fichier(fileName, ios::in);
     if (!fichier.good())
     {
         cout << "le fichier renseigné en paramètre n'existe pas" << endl;
-        return;
+        return false;
     }
     string ligne;
     vector<vector<string>> arguments;
@@ -180,7 +198,8 @@ void read(string fileName)
         size_t isPredicat = ligne.find(":-");
         if (isPredicat != string::npos)
         {
-            readRegle(ligne);
+            if(!readRegle(ligne))
+                return false;
         }
         else
         {
@@ -188,4 +207,5 @@ void read(string fileName)
         }
     }
     fichier.close();
+    return true;
 }
