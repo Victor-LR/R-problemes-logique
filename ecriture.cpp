@@ -14,10 +14,11 @@ class Ecriture {
 
 public:
 
-		Ecriture(vector<pair<string, vector<vector<string>>>> listPredicat, vector<vector<pair<string, vector<string>>>> listRegles){
+		Ecriture(string filename, vector<pair<string, vector<vector<string>>>> listPredicat, vector<vector<pair<string, vector<string>>>> listRegles){
 
 		ofstream myfile;
-		myfile.open ("example.cpp");
+		filename = filename.substr(0, filename.length()-2);
+		myfile.open (filename+"cpp");
 
 		generateInclude(myfile);
 		generatePrint(myfile);

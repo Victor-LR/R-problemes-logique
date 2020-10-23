@@ -21,7 +21,7 @@ int main(int argc, char **argv)
 	}
 
 	read(fileName);
-	Ecriture ecrire(listPredicat, listRegles);
+	Ecriture ecrire(fileName, listPredicat, listRegles);
 
 	return 0;
 }

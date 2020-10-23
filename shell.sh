@@ -1,7 +1,9 @@
 #!/bin/sh
 
 make
-./test.out $1
+./parser.exe $1
+length=`expr length "$1"`
+subseq=$(echo $1|cut -c-$(($length-2)))
 
-g++ -std=c++14 example.cpp -o pred.exe
-./pred.exe
+g++ -std=c++14 $subseq"cpp" -o $subseq"exe"
+./$subseq"exe"
