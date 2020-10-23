@@ -47,12 +47,13 @@ public:
 	}
 
 	void generatePrint(ofstream &file){
-		file << "template<class Container>\n";
-		file << "void print(Container &c) {\n";
+		file << "template<class Tuple>\n";
+		file << "ostream& operator <<(ostream &out,list<Tuple> &c) {\n";
 		file << "\tfor(auto e : c) {\n";
-		file << "\t\tcout << \"\\t\" << e << endl;\n";
+		file << "\t\tout << \"\\t\" << e << endl;\n";
 		file << "\t}\n";
-		file << "\tcout << endl;\n";
+		file << "\tout << endl;\n";
+		file << "\treturn out;\n";
 		file << "}\n\n";
 	}
 
@@ -233,13 +234,13 @@ public:
 		file << "\tcout << \"Listes des prédicats : \"<< endl;\n";
 		for(auto p : predicats){
 			auto nom = p.first;
-			file << "\tcout <<\""<< nom <<" =\\n\"; print("<< nom <<");cout << endl;\n";
+			file << "\tcout <<\""<< nom <<" =\\n\" << " << nom << " << endl;\n";
 		}
 		file << "\n\tcout << \"Solutions pour toutes les règles :\"<< endl;\n";
 		for(auto r1 : regles){
 			auto nom = r1.at(0).first;
 			file << "\t"<< nom <<"_deduce();\n";
-			file << "\tcout <<\""<< nom << " =\\n\";print("<< nom <<");cout << endl;\n";
+			file << "\tcout <<\""<< nom <<" =\\n\" << " << nom << " << endl;\n";
 		}
 		file << "}\n\n";
 	}
