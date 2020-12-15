@@ -259,7 +259,9 @@ public:
 			file << "\t"<< nom << "_deduce";
 			file << nomRegleMap[nom];
 			file << "();\n";
-			file << "\tcout <<\""<< nom <<" =\\n\" << " << nom << " << endl;\n";
+		}
+		for(std::map<std::string,int>::iterator iter=nomRegleMap.begin();iter!=nomRegleMap.end();++iter){
+			file << "\tcout <<\""<< iter->first <<" =\\n\" << " << iter->first << " << endl;\n";
 		}
 		file << "}\n\n";
 	}
