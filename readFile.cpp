@@ -36,6 +36,14 @@ static void analyseVariable(string s){
     }
 }
 
+static vector<pair<string, vector<vector<string>>>> getlistPredicat(){
+    return listPredicat;
+}
+
+static vector<vector<pair<string, vector<string>>>> getlistRegles(){
+    return listRegles;
+}
+
 //Lecture des prédicats
 static bool readPredicat(string ligne)
 {

@@ -36,7 +36,7 @@ public:
 		myfile.close();
 	}
 
-	void generateInclude(ofstream &file){
+	static void generateInclude(ofstream &file){
 		string diese;
 		diese = (char)35;
 		file << diese+"include <unistd.h>\n"+
@@ -47,7 +47,7 @@ public:
 				"using namespace std;\n\n";
 	}
 
-	void generatePrint(ofstream &file){
+	static void generatePrint(ofstream &file){
 		file << "template<class Tuple>\n";
 		file << "ostream& operator <<(ostream &out,list<Tuple> &c) {\n";
 		file << "\tfor(auto e : c) {\n";
@@ -58,7 +58,7 @@ public:
 		file << "}\n\n";
 	}
 
-	void generateClassObject(ofstream &file){
+	static void generateClassObject(ofstream &file){
 		file << "class Object {\n";
 		file << "public:\n";
 
@@ -87,7 +87,7 @@ public:
 	}
 
 	//declaration des listes de tuples
-	void generateVectorPredicat(vector<pair<string, vector<vector<string>>>> predicats, ofstream &file){
+	static void generateVectorPredicat(vector<pair<string, vector<vector<string>>>> predicats, ofstream &file){
 		//parcour de chaque paire (nom, liste(liste(string)))
 		for(auto p : predicats){
 			auto nom = p.first;
@@ -97,7 +97,7 @@ public:
 		file << "\n";
 	}
 
-	void generateVectorRegle(vector<vector<pair<string, vector<string>>>> regles, ofstream &file){
+	static void generateVectorRegle(vector<vector<pair<string, vector<string>>>> regles, ofstream &file){
 		std::list<std::string> nomPredicatListe;
 		for(auto r : regles){
 			auto nom = r.at(0).first;
@@ -114,7 +114,7 @@ public:
 		file << "\n";
 	}
 
-	void generateClassVariable(ofstream &file){
+	static void generateClassVariable(ofstream &file){
 		file << "class Variable : public Object {\n";
 		file << "public:\n";
 
@@ -127,7 +127,7 @@ public:
 		file << "};\n\n";
 	}
 
-	void generateClassValue(ofstream &file){
+	static void generateClassValue(ofstream &file){
 		file << "class Value : public Object {\n";
 		file << "public:\n";
 
@@ -148,7 +148,7 @@ public:
 	}
 
 
-	void generateClassTuple(vector<vector <pair<string, vector<string>>>> regles, vector<pair<string, vector<vector<string>>>> predicat, ofstream & file){
+	static void generateClassTuple(vector<vector <pair<string, vector<string>>>> regles, vector<pair<string, vector<vector<string>>>> predicat, ofstream & file){
 
 		vector <int> typesTuples;
 
@@ -224,7 +224,7 @@ public:
 	}
 
 	//remplissage des listes de tuples crees par generateVectorPredicat
-	void generateDeduction(vector<vector <pair<string, vector<string>>>> regles, vector<pair<string, vector<vector<string>>>> predicats, ofstream & file){
+	static void generateDeduction(vector<vector <pair<string, vector<string>>>> regles, vector<pair<string, vector<vector<string>>>> predicats, ofstream & file){
 		file << "void deduction(){\n";
 		for(auto p : predicats){
 			auto nom = p.first;
@@ -266,14 +266,14 @@ public:
 		file << "}\n\n";
 	}
 
-	void generateMain(ofstream &file){
+	static void generateMain(ofstream &file){
 		file << "int main(int argc, char **argv){\n";
 		file << "\tdeduction();\n";
 		file << "};\n\n";
 	}
 
 
-	void generate_deduce(vector< vector < pair<string, vector<string>> >> regles,  ofstream & file){
+	static void generate_deduce(vector< vector < pair<string, vector<string>> >> regles,  ofstream & file){
 		std::map<std::string, int> nomRegleMap;
 		for(auto regle : regles){
 			multimap<string, pair<string, int>> mapVariables;
