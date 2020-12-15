@@ -36,14 +36,6 @@ static void analyseVariable(string s){
     }
 }
 
-static vector<pair<string, vector<vector<string>>>> getlistPredicat(){
-    return listPredicat;
-}
-
-static vector<vector<pair<string, vector<string>>>> getlistRegles(){
-    return listRegles;
-}
-
 //Lecture des prédicats
 static bool readPredicat(string ligne)
 {
@@ -70,7 +62,7 @@ static bool readPredicat(string ligne)
     vector<string> variables;
     while (i < ligne.length())
     {
-        // boucle jusqu'Ã  la fin de la ligne
+        // boucle jusqu'a  la fin de la ligne
         size_t nextArg = ligne.find(',', i);
 
         if (nextArg == string::npos)
