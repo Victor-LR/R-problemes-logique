@@ -1,7 +1,14 @@
-#pragma once
+#ifndef libprolog_h
+#define libprolog_h
+
+#include "../readFile.cpp"
 
 class libprolog {
  public:
-   //readPl(file)
-  // vector<..> gettuples() 
+   void readPl(string filename);
+  // vector<..> gettuples()
+
+  //solve();
+
 };
+#endif

@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <string>
 #include <vector>
@@ -6,28 +7,28 @@
 
 using namespace std;
 
-vector<pair<string, vector<vector<string>>>> listPredicat;
-vector<vector<pair<string, vector<string>>>> listRegles; //la première paire est le nom de la regle
+static vector<pair<string, vector<vector<string>>>> listPredicat;
+static vector<vector<pair<string, vector<string>>>> listRegles; //la première paire est le nom de la regle
 
 //Suppression des espaces
-std::string& ltrim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
+static std::string& ltrim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
 {
     str.erase(0, str.find_first_not_of(chars));
     return str;
 }
 
-std::string& rtrim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
+static std::string& rtrim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
 {
     str.erase(str.find_last_not_of(chars) + 1);
     return str;
 }
 
-std::string& trim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
+static std::string& trim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
 {
     return ltrim(rtrim(str, chars), chars);
 }
 
-void analyseVariable(string s){
+static void analyseVariable(string s){
     size_t test = s.find("(");
     if (test != string::npos)
     {
@@ -36,7 +37,7 @@ void analyseVariable(string s){
 }
 
 //Lecture des prédicats
-bool readPredicat(string ligne)
+static bool readPredicat(string ligne)
 {
     bool newPredicat = true; //cas ou regle non existante
     pair<string, vector<vector<string>>> nouveauPredicat;
@@ -60,7 +61,7 @@ bool readPredicat(string ligne)
     int i = debutArgs + 1;
     vector<string> variables;
     while (i < ligne.length())
-    { 
+    {
         // boucle jusqu'Ã  la fin de la ligne
         size_t nextArg = ligne.find(',', i);
 
@@ -82,7 +83,7 @@ bool readPredicat(string ligne)
             cerr << e <<'\n';
             return false;
         }
-        
+
         variables.push_back(trim(arg));
         i = nextArg + 1;
     }
@@ -105,7 +106,7 @@ bool readPredicat(string ligne)
     return true;
 }
 
-bool contains(vector<pair<string, vector<string>>> v, string regle)
+static bool contains(vector<pair<string, vector<string>>> v, string regle)
 {
     for (auto it : v)
     {
@@ -117,7 +118,7 @@ bool contains(vector<pair<string, vector<string>>> v, string regle)
     return false;
 }
 
-void sortRegles()
+static void sortRegles()
 {
     vector<string> regleExiste;
     for (int it1 = 0; it1<listRegles.size();it1++ )
@@ -136,7 +137,7 @@ void sortRegles()
     }
 }
 
-bool readRegle(string ligne)
+static bool readRegle(string ligne)
 {
     bool newRegle = true; //cas ou regle non existante
     vector<pair<string, vector<string>>> nouvelleRegle;
@@ -144,7 +145,7 @@ bool readRegle(string ligne)
     bool erreur = false;
     int i = 0;
     while (i < ligne.length())
-    { 
+    {
         // boucle jusqu'Ã  la fin de la ligne
         pair<string, vector<string>> predicat;
         size_t debutArgs = ligne.find('(', i);
@@ -194,7 +195,7 @@ bool readRegle(string ligne)
     return true;
 }
 
-bool read(string fileName)
+static bool read(string fileName)
 {
     ifstream fichier(fileName, ios::in);
     if (!fichier.good())
