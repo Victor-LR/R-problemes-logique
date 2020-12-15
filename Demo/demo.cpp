@@ -20,8 +20,13 @@ int main(int argc, char **argv)
 	}
 
 	l.readPl(fileName);
-	l.generateCPP();
-	l.printPredicates();
+	// l.generateCPP();
+	for(Predicate p : l.getPredicates()){
+		std::cout << p << '\n';
+	}
 
+	for(Rule r : l.getRules()){
+		std::cout << r << '\n';
+	}
 	return 0;
 }
