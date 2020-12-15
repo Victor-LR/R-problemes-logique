@@ -13,8 +13,7 @@ private:
 public:
 
   void readPl(string filename);
-  // vector<..> gettuples()
-
+  void printPredicates();
   void generateCPP();
 
 };

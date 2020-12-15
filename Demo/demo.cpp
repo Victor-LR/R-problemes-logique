@@ -21,6 +21,7 @@ int main(int argc, char **argv)
 
 	l.readPl(fileName);
 	l.generateCPP();
+	l.printPredicates();
 
 	return 0;
 }
