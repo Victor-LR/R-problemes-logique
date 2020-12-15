@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <list>
 #include <algorithm>
 #include <map>
 
@@ -97,10 +98,18 @@ public:
 	}
 
 	void generateVectorRegle(vector<vector<pair<string, vector<string>>>> regles, ofstream &file){
+		std::list<std::string> nomPredicatListe;
 		for(auto r : regles){
 			auto nom = r.at(0).first;
 			auto tuple_size = r.at(0).second.size();
-			file << "list<Tuple" << tuple_size << "> " + nom + ";\n";
+			auto it = std::find(nomPredicatListe.begin(),nomPredicatListe.end(),nom);
+			if(it != nomPredicatListe.end()){
+				std::cout << "contains " << nom << std::endl;
+			}else{
+				file << "list<Tuple" << tuple_size << "> " + nom + ";\n";
+				nomPredicatListe.push_back(nom);
+			}
+			
 		}
 		file << "\n";
 	}
@@ -237,9 +246,19 @@ public:
 			file << "\tcout <<\""<< nom <<" =\\n\" << " << nom << " << endl;\n";
 		}
 		file << "\n\tcout << \"Déductions pour toutes les règles :\"<< endl;\n";
+		std::map<std::string, int> nomRegleMap;
 		for(auto r1 : regles){
 			auto nom = r1.at(0).first;
-			file << "\t"<< nom <<"_deduce();\n";
+			if(nomRegleMap.find(nom)!= nomRegleMap.end()){
+				nomRegleMap[nom]++;
+			}
+			else
+			{
+				nomRegleMap[nom]=1;
+			}
+			file << "\t"<< nom << "_deduce";
+			file << nomRegleMap[nom];
+			file << "();\n";
 			file << "\tcout <<\""<< nom <<" =\\n\" << " << nom << " << endl;\n";
 		}
 		file << "}\n\n";
@@ -253,14 +272,25 @@ public:
 
 
 	void generate_deduce(vector< vector < pair<string, vector<string>> >> regles,  ofstream & file){
+		std::map<std::string, int> nomRegleMap;
 		for(auto regle : regles){
 			multimap<string, pair<string, int>> mapVariables;
 
 			string nomRegle = regle.at(0).first;
+			//Gestion des doublons de prédicat supplémentaire
+			if(nomRegleMap.find(nomRegle)!= nomRegleMap.end()){
+				nomRegleMap[nomRegle]++;
+			}
+			else
+			{
+				nomRegleMap[nomRegle]=1;
+			}
 			auto variablesRegle = regle.at(0).second;
 			auto nbpredicat = regle.size();
-			auto tuple_size = regle.at(0).second.size();;
-			file << "void " + nomRegle + "_deduce(){\n";
+			auto tuple_size = regle.at(0).second.size();
+			file << "void " + nomRegle + "_deduce";
+			file << nomRegleMap[nomRegle]; 
+			file << "(){\n";
 			string tab = "\t";
 			for(int t = 1; t<regle.size(); t++){
 				auto predicat = regle.at(t);
@@ -309,3 +339,4 @@ public:
 	}
 
 };
+
