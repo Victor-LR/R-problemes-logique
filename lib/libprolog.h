@@ -1,6 +1,7 @@
 #ifndef libprolog_h
 #define libprolog_h
 
+#include <cstdarg>
 #include "../readFile.cpp"
 #include "../ecriture.cpp"
 
@@ -8,6 +9,12 @@ struct Predicate{
   Predicate(string nom, vector<string> constantes):_nom(nom), _constantes(constantes){}
   string _nom;
   vector<string> _constantes;
+
+  string get_nom(){return _nom;}
+  void set_nom(string nom){_nom = nom;}
+
+  vector<string> get_constantes(){return _constantes;}
+  void set_constantes(vector<string> constantes){_constantes = constantes;}
 
   friend ostream& operator<<(ostream &out,const Predicate &p) {
     out << p._nom << "(";
@@ -21,10 +28,19 @@ struct Predicate{
 
 struct Rule{
   Rule(string nom, vector<string> var, vector<Predicate> predicats)
-  :_nom(nom), _var(var), _predicats(predicats){}
+  :_nom(nom), _var(var), _predicatsR(predicats){}
   string _nom;
   vector<string> _var;
-  vector<Predicate> _predicats;
+  vector<Predicate> _predicatsR;
+
+  string get_nom(){return _nom;}
+  void set_nom(string nom){_nom = nom;}
+
+  vector<string> get_var(){return _var;}
+  void set_var(vector<string> var){_var = var;}
+
+  vector<Predicate> get_predicatsR(){return _predicatsR;}
+  void set_predicatsR(vector<Predicate> predicats){_predicatsR = predicats;}
 
   friend ostream& operator<<(ostream &out,const Rule &r) {
     out << r._nom << "(";
@@ -32,8 +48,8 @@ struct Rule{
       out << r._var[i] << (i==r._var.size()-1 ? "" : ",");
     }
     out << ") :- ";
-    for(int i=0; i<r._predicats.size(); ++i){
-      out << r._predicats[i] << (i==r._predicats.size()-1 ? "" : ",");
+    for(int i=0; i<r._predicatsR.size(); ++i){
+      out << r._predicatsR[i] << (i==r._predicatsR.size()-1 ? "" : ",");
     }
     return out;
   }
@@ -46,17 +62,25 @@ private:
   vector<Rule> _rules;
 
 public:
+  /*utility*/
   void readPl(string filename);
   void generateCPP();
-  vector<Predicate> getPredicates();
-  vector<Rule> getRules();
-  //addPredicate
-  //addRule
   //solve
+  //export tout en pl apres les modifs
 
+  /*predicates*/
+  vector<Predicate> getPredicates();
+  void setPredicats(vector<Predicate> predicats);
+  void addPredicate(Predicate p);
+  void addPredicate(string nom, int n, ...);
+  Predicate createPredicate(string nom, int n, ...);
 
-  // void printPredicates();
-  // void printRules();
+  /*rules*/
+  vector<Rule> getRules();
+  void setRules(vector<Rule> rules);
+  void addRule(Rule r);
+  void addRule(string nom, vector<Predicate> predicats, int n, ...);
+  Rule createRule(string nom, vector<Predicate> predicats, int n, ...);
 };
 
 #endif

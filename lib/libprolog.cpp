@@ -1,20 +1,19 @@
 #include "libprolog.h"
 
-// ostream& operator<<(ostream &out,const Predicate &p) {
-//   out << p._nom << "(";
-//   for(int i=0; i<p._constantes.size(); ++i) {
-//     out << p._constantes[i] << (i==p._constantes.size()-1 ? "" : ",");
-//   }
-//   out << ")" << endl;
-//   return out;
-// }
-
 vector<Predicate> libprolog::getPredicates(){
   return _predicats;
 }
 
 vector<Rule> libprolog::getRules(){
   return _rules;
+}
+
+void libprolog::setPredicats(vector<Predicate> predicats){
+  _predicats = predicats;
+}
+
+void libprolog::setRules(vector<Rule> rules){
+  _rules = rules;
 }
 
 void libprolog::readPl(string filename){
@@ -50,27 +49,73 @@ void libprolog::readPl(string filename){
   }
 }
 
-void libprolog::generateCPP(){
-  Ecriture ecrire(_filename, listPredicat, listRegles);
+void libprolog::addPredicate(Predicate p){
+  _predicats.push_back(p);
 }
 
 /*
-void libprolog::printPredicates(){ //affiche la liste des predicats
-for(pair<string, vector<vector<string>>> pair : listPredicat){
-std::cout << pair.first << " = " << '\n'; //nom du predicat
-for(vector<string> v : pair.second ){
-std::cout << "(";
-for(int i = 0; i<v.size(); i++){
-std::cout << v[i] << (i==v.size()-1 ? "" : ",");
-}
-std::cout << ")";
-std::cout << '\n';
-}
-}
-}
-
-void libprolog::printRules(){
-// for(vector<vector<pair<string, vector<string>>>>)
-}
-
+nom : string le nomPred
+n : nombre de constantes
+... : une liste de string, les constantes du predicat
 */
+void libprolog::addPredicate(string nom, int n, ...){
+  vector<string> v_constantes;
+  va_list constantes;
+  va_start(constantes, n); //la liste des constantes commence apres n
+  for(int i=0; i<n; ++i){
+    string c = va_arg(constantes, const char *);
+    v_constantes.push_back(c);
+  }
+  va_end(constantes);
+  _predicats.push_back(Predicate(nom, v_constantes));
+}
+
+void libprolog::addRule(Rule r){
+  _rules.push_back(r);
+}
+
+/*
+nom : string le nomRule
+predicats : vector de predicats, corps de la regle
+n : nombre de var de la tete de regle
+... : une liste de string, les var de la tete de regle
+*/
+void libprolog::addRule(string nom, vector<Predicate> predicats, int n, ...){
+  vector<string> v_var;
+  va_list vars;
+  va_start(vars, n);
+  for(int i=0; i<n; ++i){
+    string v = va_arg(vars, const char *);
+    v_var.push_back(v);
+  }
+  va_end(vars);
+  _rules.push_back(Rule(nom, v_var, predicats));
+}
+
+Predicate libprolog::createPredicate(string nom, int n, ...){
+  vector<string> v_constantes;
+  va_list constantes;
+  va_start(constantes, n); //la liste des constantes commence apres n
+  for(int i=0; i<n; ++i){
+    string c = va_arg(constantes, const char *);
+    v_constantes.push_back(c);
+  }
+  va_end(constantes);
+  return Predicate(nom, v_constantes);
+}
+
+Rule libprolog::createRule(string nom, vector<Predicate> predicats, int n, ...){
+  vector<string> v_var;
+  va_list vars;
+  va_start(vars, n);
+  for(int i=0; i<n; ++i){
+    string v = va_arg(vars, const char *);
+    v_var.push_back(v);
+  }
+  va_end(vars);
+  return Rule(nom, v_var, predicats);
+}
+
+void libprolog::generateCPP(){
+  Ecriture ecrire(_filename, listPredicat, listRegles);
+}

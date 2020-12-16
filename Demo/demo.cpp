@@ -21,6 +21,17 @@ int main(int argc, char **argv)
 
 	l.readPl(fileName);
 	// l.generateCPP();
+
+	l.addPredicate("coucou", 4, "victor", "jerome", "tomotei", "matthias");
+	vector<string> v; v.push_back("oui"); v.push_back("non");
+	l.addPredicate(Predicate("titi", v));
+
+	vector<Predicate> preds;
+	preds.push_back(l.createPredicate("pred1", 2, "X", "Y"));
+	preds.push_back(l.createPredicate("pred2", 2, "Z", "Y"));
+	l.addRule("regle", preds, 3, "X", "Y", "Z");
+
+
 	for(Predicate p : l.getPredicates()){
 		std::cout << p << '\n';
 	}
@@ -28,5 +39,6 @@ int main(int argc, char **argv)
 	for(Rule r : l.getRules()){
 		std::cout << r << '\n';
 	}
+
 	return 0;
 }
