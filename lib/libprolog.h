@@ -65,11 +65,13 @@ public:
   /*utility*/
   void readPl(string filename);
   void generateCPP();
-  //solve
-  //export tout en pl apres les modifs
+  void solvePl();
+  void exportPl(string filename);
+  // export tout en pl apres les modifs
 
   /*predicates*/
   vector<Predicate> getPredicates();
+  vector<Predicate> findPredicates(string nom);
   void setPredicats(vector<Predicate> predicats);
   void addPredicate(Predicate p);
   void addPredicate(string nom, int n, ...);
@@ -81,6 +83,10 @@ public:
   void addRule(Rule r);
   void addRule(string nom, vector<Predicate> predicats, int n, ...);
   Rule createRule(string nom, vector<Predicate> predicats, int n, ...);
+
+private:
+  void doRecursion(int baseCondition, vector<Predicate> preds);
+  int count = 0;
 };
 
 #endif

@@ -53,6 +53,37 @@ void libprolog::addPredicate(Predicate p){
   _predicats.push_back(p);
 }
 
+/*filename : nom du fichier avec extension .pl*/
+void libprolog::exportPl(string filename){
+  ofstream myfile;
+  myfile.open(filename);
+  //ecriture des preficats au format pl
+  for(Predicate p : _predicats){
+    myfile << p._nom << "(";
+    for(int i=0; i<p._constantes.size(); ++i){
+      myfile << p._constantes[i] << (i==p._constantes.size() -1 ? "" : ",");
+    }
+    myfile << ")." << endl;
+  }
+  //ecriture des regles au format pl
+  for(Rule r : _rules){
+    myfile << r._nom << "(";
+    for(int i=0; i<r._var.size(); ++i){
+      myfile << r._var[i] << (i==r._var.size() -1 ? "" : ",");
+    }
+    myfile << "):-";
+    for(int j=0; j<r._predicatsR.size(); ++j){
+      myfile << r._predicatsR[j]._nom << "(";
+      for(int k=0; k<r._predicatsR[j]._constantes.size(); ++k){
+        myfile << r._predicatsR[j]._constantes[k]
+        << (k==r._predicatsR[j]._constantes.size() -1 ? "" : ",");
+      }
+      myfile << ")" << (j==r._predicatsR.size() -1 ? "." : ",");
+    }
+    myfile << endl;
+  }
+  myfile.close();
+}
 /*
 nom : string le nomPred
 n : nombre de constantes
@@ -118,4 +149,35 @@ Rule libprolog::createRule(string nom, vector<Predicate> predicats, int n, ...){
 
 void libprolog::generateCPP(){
   Ecriture ecrire(_filename, listPredicat, listRegles);
+}
+
+vector<Predicate> libprolog::findPredicates(string nom){
+  vector<Predicate> v;
+  for(Predicate p : getPredicates()){
+    if(p.get_nom() == nom ){
+      v.push_back(p);
+    }
+  }
+  return v;
+}
+
+void libprolog::doRecursion(int baseCondition, vector<Predicate> preds){
+ if(baseCondition==0){
+   std::cout << "FIN : " <<  '\n';
+   count++;
+ } else {
+   preds.erase(preds.begin());
+   baseCondition--;
+   for(Predicate p : findPredicates(preds[0].get_nom())){
+     doRecursion(baseCondition, preds);
+   }
+ }
+}
+
+void libprolog::solvePl(){
+  for(Rule r : _rules){
+    int taillecorpsregle = r.get_predicatsR().size();
+    doRecursion(taillecorpsregle, r.get_predicatsR());
+  }
+  std::cout << "phrase" << count << '\n';
 }
