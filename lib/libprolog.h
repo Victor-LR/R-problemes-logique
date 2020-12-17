@@ -87,6 +87,7 @@ public:
 
 private:
   void doRecursion(int baseCondition, Rule r, vector<Predicate> t,
+  multimap<string, pair<int,int>> &mapVariables,
   multimap<pair<int,int>, pair<int, int>> &conditons);
 
   multimap<pair<int,int>, pair<int, int>> generateConditions(multimap<string, pair<int, int>> mapVariables);

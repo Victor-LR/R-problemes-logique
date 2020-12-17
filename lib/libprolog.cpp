@@ -173,32 +173,38 @@ vector<Predicate> libprolog::getPredicatesInRule(Rule r){
 }
 
 void libprolog::doRecursion(int baseCondition, Rule r, vector<Predicate> t,
+multimap<string, pair<int,int>> &mapVariables,
 multimap<pair<int,int>, pair<int, int>> &conditions){
  vector<Predicate> preds = r.get_predicatsR();
  if(baseCondition==0){
-
+     reverse(t.begin(), t.end());
      bool continuer = true;
      vector<string> v_sol;
      for(auto p: conditions){
          if(continuer && t.at(p.first.first-1)[p.first.second-1] ==
          t.at(p.second.first-1)[p.second.second-1]){
              continuer = true;
-             v_sol.push_back(t.at(p.first.first-1)[p.first.second-1]);
+             // v_sol.push_back(t.at(p.first.first-1)[p.first.second-1]);
              //remplir vector
          }else{
              continuer = false;
              break;
          }
      }
+     string value;
      if(continuer){
-       // for(auto entry : mapVariables){
-       //
-       // }
+       for(auto var : r.get_var()){
+         auto it = mapVariables.find(var);
+         if(it != mapVariables.end()){
+           value = t.at(it->second.first-1)[it->second.second-1];
+           v_sol.push_back(value);
+         }
+       }
         std::cout << "SOLUTION DEDUITE :" << '\n';
           for(string sol : v_sol){
-            std::cout << sol << " " << v_sol.size();
+            std::cout << sol << " ,";
           }
-          std::cout << '\n';
+          std::cout << v_sol.size() << '\n';
          //generate solution
          //recup pos X1,X2,X3,X4 dans la tete de r
      }
@@ -216,7 +222,7 @@ multimap<pair<int,int>, pair<int, int>> &conditions){
    baseCondition--;
    for(Predicate p : findPredicates(preds[baseCondition].get_nom())){ //liste des instances de preds du corps de r
      t.push_back(p);
-     doRecursion(baseCondition, r, t, conditions);
+     doRecursion(baseCondition, r, t, mapVariables, conditions);
      t.pop_back();
    }
  }
@@ -252,7 +258,7 @@ void libprolog::solvePl(){
       << " " << entry.second.first << " " <<
       entry.second.second << '\n';
     }
-    doRecursion(taillecorpsregle, r, t, conditions);
+    doRecursion(taillecorpsregle, r, t, mapVariables, conditions);
   }
   std::cout << "it : " << count << '\n';
 }
