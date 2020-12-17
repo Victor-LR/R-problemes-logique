@@ -161,6 +161,7 @@ vector<Predicate> libprolog::findPredicates(string nom){
   return v;
 }
 
+/*retourne les instances des preds d'une regle*/
 vector<Predicate> libprolog::getPredicatesInRule(Rule r){
   vector<Predicate> v;
   vector<Predicate> vr = r.get_predicatsR();
@@ -178,11 +179,20 @@ vector<Predicate> libprolog::getPredicatesInRule(Rule r){
 //   recur
 // }
 
-void libprolog::doRecursion(int baseCondition, Rule r, vector<Predicate> t){
+void libprolog::doRecursion(int baseCondition, Rule r, vector<Predicate> t,
+multimap<string, pair<int,int>> &mapVariables){
  vector<Predicate> preds = r.get_predicatsR();
  if(baseCondition==0){
    for( Predicate p : t){
      std::cout << p << ", ";
+     //recup pos X1,X2,X3,X4 dans la tete de r
+
+     // for(auto v1 : mapVariables){
+     //   for(auto v2 : mapVariables){
+     //     if(v1 == v2){
+     //       if(v1.second
+     //     }
+     //   }
      // recur(sf,gd)
      // // multimap m;
      // // for()
@@ -191,11 +201,11 @@ void libprolog::doRecursion(int baseCondition, Rule r, vector<Predicate> t){
    std::cout<<"taille " << t.size() << endl;
    count++;
  } else {
-   preds.erase(preds.begin());
+   // preds.erase(preds.begin());
    baseCondition--;
-   for(Predicate p : getPredicatesInRule(r)){
+   for(Predicate p : findPredicates(preds[baseCondition].get_nom())){ //liste des instances de preds du corps de r
      t.push_back(p);
-     doRecursion(baseCondition, r, t);
+     doRecursion(baseCondition, r, t, mapVariables);
      t.pop_back();
    }
  }
@@ -203,9 +213,24 @@ void libprolog::doRecursion(int baseCondition, Rule r, vector<Predicate> t){
 
 void libprolog::solvePl(){
   for(Rule r : _rules){
+    //multimap variables/position de r
+    multimap<string, pair<int, int>> mapVariables;
+    auto corps_regle = r.get_predicatsR();
+    for(int i=1; i<=corps_regle.size(); ++i){
+      Predicate p = corps_regle[i-1];
+      auto var_pred = p.get_constantes();
+      for(int j=1; j<=var_pred.size(); ++j){
+        mapVariables.insert(make_pair(var_pred[j-1], make_pair(i,j)));
+      }
+    }
+    for(auto entry : mapVariables){
+      std::cout << entry.first << " " << entry.second.first << " " <<
+      entry.second.second << '\n';
+    }
+    std::cout << "DEBUT DE REGLE " << r << '\n';
     vector<Predicate> t;
     int taillecorpsregle = r.get_predicatsR().size();
-    doRecursion(taillecorpsregle, r, t);
+    doRecursion(taillecorpsregle, r, t, mapVariables);
   }
   std::cout << "it : " << count << '\n';
 }
