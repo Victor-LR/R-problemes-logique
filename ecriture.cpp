@@ -294,6 +294,8 @@ public:
 			file << nomRegleMap[nomRegle]; 
 			file << "(){\n";
 			string tab = "\t";
+
+			//création du futur parcours de toutes les combinaisons des prédicats 
 			for(int t = 1; t<regle.size(); t++){
 				auto predicat = regle.at(t);
 				string nomPredicat = predicat.first;
@@ -302,13 +304,19 @@ public:
 				int i = 0;
 				for(auto variable : predicat.second){ //pour chaque variable du predicat {X, Y, ...}
 						string tString = "t"+to_string(t);
+						//variable : nom de la variable, tString : t1/t2/T3..., i :x1/x2
 						mapVariables.insert(make_pair(variable, make_pair(tString, i)));
 					i++;
 				}
 			}
 			tab += "\t";
+
+			//création des conditions parcourues
 			for(auto v1 : mapVariables){
 				for(auto v2 : mapVariables){
+					//si deux variable du prédicat sont égales donc qu'il faut les comparer :
+					// exemple (grand_pere(X,Z):- pere(X,Y), pere(Y,Z).) Y==Y test
+					// et si il ne sagit pas du même t donc du même prédicat 
 					if((v1.first == v2.first) && (v1.second.first != v2.second.first)){
 						int v1nombre = stoi((v1.second.first).substr(1,1));
 						int v2nombre = stoi((v2.second.first).substr(1,1));
@@ -322,6 +330,8 @@ public:
 					}
 				}
 			}
+
+			//Création du code pour insérer une solution dans la liste finale 
 			file << tab << "\t" + nomRegle + ".push_back(Tuple" << tuple_size << "(";
 
 			for(int i = 0; i<variablesRegle.size(); i++){

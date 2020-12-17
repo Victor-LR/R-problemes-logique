@@ -76,7 +76,8 @@ public:
   void setPredicats(vector<Predicate> predicats);
   void addPredicate(Predicate p);
   void addPredicate(string nom, int n, ...);
-  Predicate createPredicate(string nom, int n, ...);
+  Predicate createPredicate(string nom, int n, ....);
+..);
 
   /*rules*/
   vector<Rule> getRules();
@@ -87,7 +88,9 @@ public:
 
 private:
   void doRecursion(int baseCondition, Rule r, vector<Predicate> t,
-  multimap<string, pair<int,int>> & mapVariables);
+  multimap<pair<int,int>, pair<int, int>> &conditons);
+
+  multimap<pair<int,int>, pair<int, int>> generateConditions(multimap<string, pair<int, int>> mapVariables);
   int count = 0;
   vector<Predicate> getPredicatesInRule(Rule r);
 };

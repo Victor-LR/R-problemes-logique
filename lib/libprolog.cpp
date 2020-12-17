@@ -180,9 +180,22 @@ vector<Predicate> libprolog::getPredicatesInRule(Rule r){
 // }
 
 void libprolog::doRecursion(int baseCondition, Rule r, vector<Predicate> t,
-multimap<string, pair<int,int>> &mapVariables){
+multimap<pair<int,int>, pair<int, int>> &conditions){
  vector<Predicate> preds = r.get_predicatsR();
  if(baseCondition==0){
+
+       bool continuer = true;
+     for(auto p: conditions){
+         if(continuer && t.at(p.first.first)[p.first.second] == t.at(p.second.first)[p.second.second]){
+             continuer = true;
+         }else{
+             continuer = false;
+         }
+     }
+     if(continuer){
+         //generate solution 
+     }
+
    for( Predicate p : t){
      std::cout << p << ", ";
      //recup pos X1,X2,X3,X4 dans la tete de r
@@ -205,7 +218,7 @@ multimap<string, pair<int,int>> &mapVariables){
    baseCondition--;
    for(Predicate p : findPredicates(preds[baseCondition].get_nom())){ //liste des instances de preds du corps de r
      t.push_back(p);
-     doRecursion(baseCondition, r, t, mapVariables);
+     doRecursion(baseCondition, r, t, conditions);
      t.pop_back();
    }
  }
@@ -230,7 +243,28 @@ void libprolog::solvePl(){
     std::cout << "DEBUT DE REGLE " << r << '\n';
     vector<Predicate> t;
     int taillecorpsregle = r.get_predicatsR().size();
-    doRecursion(taillecorpsregle, r, t, mapVariables);
+    multimap<pair<int,int>, pair<int, int>> conditions ;
+    conditions = generateConditions(mapVariables);
+    doRecursion(taillecorpsregle, r, t, conditions);
   }
   std::cout << "it : " << count << '\n';
 }
+
+multimap<pair<int,int>, pair<int, int>> libprolog::generateConditions(multimap<string, pair<int, int>> mapVariables){
+  //création des conditions parcourues
+  multimap<pair<int,int>, pair<int, int>> conditions;
+			for(auto v1 : mapVariables){
+				for(auto v2 : mapVariables){
+					//si deux variable du prédicat sont égales donc qu'il faut les comparer :
+					// exemple (grand_pere(X,Z):- pere(X,Y), pere(Y,Z).) Y==Y test
+					// et si il ne sagit pas du même t donc du même prédicat 
+					if((v1.first == v2.first) && (v1.second.first != v2.second.first)){
+						//Suppression des doublons dans les conditions
+						if (v1.second.first < v2.second.first){
+                    conditions.insert(new pair(v1.second.first,v1.second.second),new pair(v2.second.first,v2.second.second));
+						}
+					}
+				}
+			}
+      return conditions;
+} 
