@@ -161,23 +161,51 @@ vector<Predicate> libprolog::findPredicates(string nom){
   return v;
 }
 
-void libprolog::doRecursion(int baseCondition, vector<Predicate> preds){
+vector<Predicate> libprolog::getPredicatesInRule(Rule r){
+  vector<Predicate> v;
+  vector<Predicate> vr = r.get_predicatsR();
+  for(Predicate p : vr){
+    vector<Predicate> x = findPredicates(p.get_nom());
+    v.insert(v.end(), x.begin(), x.end());
+  }
+  return v;
+}
+
+
+// recur(){
+//   ifconditions
+//     if(sf = gd)
+//   recur
+// }
+
+void libprolog::doRecursion(int baseCondition, Rule r, vector<Predicate> t){
+ vector<Predicate> preds = r.get_predicatsR();
  if(baseCondition==0){
-   std::cout << "FIN : " <<  '\n';
+   for( Predicate p : t){
+     std::cout << p << ", ";
+     // recur(sf,gd)
+     // // multimap m;
+     // // for()
+     // p[0] p[1]
+   }
+   std::cout<<"taille " << t.size() << endl;
    count++;
  } else {
    preds.erase(preds.begin());
    baseCondition--;
-   for(Predicate p : findPredicates(preds[0].get_nom())){
-     doRecursion(baseCondition, preds);
+   for(Predicate p : getPredicatesInRule(r)){
+     t.push_back(p);
+     doRecursion(baseCondition, r, t);
+     t.pop_back();
    }
  }
 }
 
 void libprolog::solvePl(){
   for(Rule r : _rules){
+    vector<Predicate> t;
     int taillecorpsregle = r.get_predicatsR().size();
-    doRecursion(taillecorpsregle, r.get_predicatsR());
+    doRecursion(taillecorpsregle, r, t);
   }
-  std::cout << "phrase" << count << '\n';
+  std::cout << "it : " << count << '\n';
 }

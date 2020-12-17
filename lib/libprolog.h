@@ -13,6 +13,8 @@ struct Predicate{
   string get_nom(){return _nom;}
   void set_nom(string nom){_nom = nom;}
 
+  string& operator[](size_t i){return _constantes[i];}
+
   vector<string> get_constantes(){return _constantes;}
   void set_constantes(vector<string> constantes){_constantes = constantes;}
 
@@ -67,7 +69,6 @@ public:
   void generateCPP();
   void solvePl();
   void exportPl(string filename);
-  // export tout en pl apres les modifs
 
   /*predicates*/
   vector<Predicate> getPredicates();
@@ -85,8 +86,9 @@ public:
   Rule createRule(string nom, vector<Predicate> predicats, int n, ...);
 
 private:
-  void doRecursion(int baseCondition, vector<Predicate> preds);
+  void doRecursion(int baseCondition, Rule r, vector<Predicate> t);
   int count = 0;
+  vector<Predicate> getPredicatesInRule(Rule r);
 };
 
 #endif
