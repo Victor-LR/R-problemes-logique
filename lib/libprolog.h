@@ -76,8 +76,7 @@ public:
   void setPredicats(vector<Predicate> predicats);
   void addPredicate(Predicate p);
   void addPredicate(string nom, int n, ...);
-  Predicate createPredicate(string nom, int n, ....);
-..);
+  Predicate createPredicate(string nom, int n, ...);
 
   /*rules*/
   vector<Rule> getRules();

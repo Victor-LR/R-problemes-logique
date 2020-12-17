@@ -172,46 +172,44 @@ vector<Predicate> libprolog::getPredicatesInRule(Rule r){
   return v;
 }
 
-
-// recur(){
-//   ifconditions
-//     if(sf = gd)
-//   recur
-// }
-
 void libprolog::doRecursion(int baseCondition, Rule r, vector<Predicate> t,
 multimap<pair<int,int>, pair<int, int>> &conditions){
  vector<Predicate> preds = r.get_predicatsR();
  if(baseCondition==0){
 
-       bool continuer = true;
+     bool continuer = true;
+     vector<string> v_sol;
      for(auto p: conditions){
-         if(continuer && t.at(p.first.first)[p.first.second] == t.at(p.second.first)[p.second.second]){
+         if(continuer && t.at(p.first.first-1)[p.first.second-1] ==
+         t.at(p.second.first-1)[p.second.second-1]){
              continuer = true;
+             v_sol.push_back(t.at(p.first.first-1)[p.first.second-1]);
+             //remplir vector
          }else{
              continuer = false;
+             break;
          }
      }
      if(continuer){
-         //generate solution 
+       // for(auto entry : mapVariables){
+       //
+       // }
+        std::cout << "SOLUTION DEDUITE :" << '\n';
+          for(string sol : v_sol){
+            std::cout << sol << " " << v_sol.size();
+          }
+          std::cout << '\n';
+         //generate solution
+         //recup pos X1,X2,X3,X4 dans la tete de r
      }
 
-   for( Predicate p : t){
-     std::cout << p << ", ";
-     //recup pos X1,X2,X3,X4 dans la tete de r
+   // for( Predicate p : t){
+   //   std::cout << p << ", ";
+   //   //if (/* condition */) {
+   //     /* _predicats.push_back(Predicate(r.get_nom(), )); */
+   //   }
 
-     // for(auto v1 : mapVariables){
-     //   for(auto v2 : mapVariables){
-     //     if(v1 == v2){
-     //       if(v1.second
-     //     }
-     //   }
-     // recur(sf,gd)
-     // // multimap m;
-     // // for()
-     // p[0] p[1]
-   }
-   std::cout<<"taille " << t.size() << endl;
+   // std::cout<<"taille " << t.size() << endl;
    count++;
  } else {
    // preds.erase(preds.begin());
@@ -236,6 +234,8 @@ void libprolog::solvePl(){
         mapVariables.insert(make_pair(var_pred[j-1], make_pair(i,j)));
       }
     }
+    //affichage map
+    std::cout << "MapVariable pour " << r.get_nom() << '\n';
     for(auto entry : mapVariables){
       std::cout << entry.first << " " << entry.second.first << " " <<
       entry.second.second << '\n';
@@ -243,28 +243,37 @@ void libprolog::solvePl(){
     std::cout << "DEBUT DE REGLE " << r << '\n';
     vector<Predicate> t;
     int taillecorpsregle = r.get_predicatsR().size();
-    multimap<pair<int,int>, pair<int, int>> conditions ;
-    conditions = generateConditions(mapVariables);
+    multimap<pair<int,int>, pair<int, int>> conditions
+    = generateConditions(mapVariables);
+    std::cout << "========================" << '\n';
+    std::cout << "MapConditions " << '\n';
+    for(auto entry : conditions){
+      std::cout << entry.first.first << " " << entry.first.second
+      << " " << entry.second.first << " " <<
+      entry.second.second << '\n';
+    }
     doRecursion(taillecorpsregle, r, t, conditions);
   }
   std::cout << "it : " << count << '\n';
 }
 
-multimap<pair<int,int>, pair<int, int>> libprolog::generateConditions(multimap<string, pair<int, int>> mapVariables){
+multimap<pair<int,int>, pair<int, int>> libprolog::generateConditions
+(multimap<string, pair<int, int>> mapVariables){
   //création des conditions parcourues
   multimap<pair<int,int>, pair<int, int>> conditions;
 			for(auto v1 : mapVariables){
 				for(auto v2 : mapVariables){
 					//si deux variable du prédicat sont égales donc qu'il faut les comparer :
 					// exemple (grand_pere(X,Z):- pere(X,Y), pere(Y,Z).) Y==Y test
-					// et si il ne sagit pas du même t donc du même prédicat 
+					// et si il ne sagit pas du même t donc du même prédicat
 					if((v1.first == v2.first) && (v1.second.first != v2.second.first)){
 						//Suppression des doublons dans les conditions
 						if (v1.second.first < v2.second.first){
-                    conditions.insert(new pair(v1.second.first,v1.second.second),new pair(v2.second.first,v2.second.second));
+              conditions.insert(make_pair(make_pair(v1.second.first,v1.second.second)
+              ,make_pair(v2.second.first,v2.second.second)));
 						}
 					}
 				}
 			}
-      return conditions;
-} 
+    return conditions;
+}
