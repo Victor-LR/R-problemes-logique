@@ -337,6 +337,7 @@ public:
 					tab += "\t";
 				file << tab <<"}\n";
 			}
+			file <<"\n";
 		}
 	}
 
