@@ -20,18 +20,17 @@ int main(int argc, char **argv)
 	}
 
 	l.readPl(fileName);
-	// l.generateCPP();
 
-	// l.addPredicate("coucou", 4, "victor", "jerome", "tomotei", "matthias");
 	vector<string> v; v.push_back("oui"); v.push_back("non");
-	// l.addPredicate(Predicate("titi", v));
+	l.addPredicate(Predicate("titi", v));
+	l.addPredicate("coucou", 4, "victor", "jerome", "tomotei", "matthias");
 
 	vector<Predicate> preds;
-	preds.push_back(l.createPredicate("pred1", 2, "X", "Y"));
+	preds.push_back(l.createPredicate("pred1", 4, "X", "Y", "Z", "K"));
 	preds.push_back(l.createPredicate("pred2", 2, "Z", "Y"));
-	// l.addRule("regle", preds, 3, "X", "Y", "Z");
+	l.addRule("regle", preds, 3, "X", "Y", "Z");
 
-
+/*
 	for(Predicate p : l.getPredicates()){
 		std::cout << p << '\n';
 	}
@@ -39,10 +38,12 @@ int main(int argc, char **argv)
 	for(Rule r : l.getRules()){
 		std::cout << r << '\n';
 	}
+*/
+	l.generateCPP();
 
 	l.exportPl("sortie.pl");
 
-	l.solvePl();
+	// l.solvePl();
 
 	return 0;
 }

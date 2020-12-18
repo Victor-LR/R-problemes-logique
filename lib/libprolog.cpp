@@ -157,9 +157,44 @@ Rule libprolog::createRule(string nom, vector<string> var, vector<Predicate> pre
 
 
 void libprolog::generateCPP(){
-  //a refaire a partir de _predicats, _rules
-  //convertir struct -> vector<string....>
-  Ecriture ecrire(_filename, listPredicat, listRegles);
+  //conversion predicats
+  vector<pair<string, vector<vector<string>>>> vector_predicats;
+  string nompred = _predicats[0].get_nom();
+  vector<vector<string>> v_all_constantes;
+  for(int i=0; i<_predicats.size(); ++i){
+    Predicate p = _predicats[i];
+    string newpred = p.get_nom();
+    if(nompred == newpred){
+      v_all_constantes.push_back(p.get_constantes());
+    } else {
+      if(i==_predicats.size()-1){
+        vector_predicats.push_back(make_pair(nompred, v_all_constantes));
+        vector<vector<string>> v_last;
+        v_last.push_back(p.get_constantes());
+        vector_predicats.push_back(make_pair(newpred, v_last));
+      }
+      else{
+        vector_predicats.push_back(make_pair(nompred, v_all_constantes));
+        v_all_constantes.clear();
+        v_all_constantes.push_back(p.get_constantes());
+        nompred = p.get_nom();
+      }
+    }
+  }
+  //conversion regles
+  vector<vector<pair<string, vector<string>>>> vector_regles;
+  for(int i=0; i<_rules.size(); ++i){
+    Rule r = _rules[i];
+    vector<pair<string, vector<string>>> v_regle;
+    //tete de regle
+    v_regle.push_back(make_pair(r.get_nom(), r.get_var()));
+    for(int j=0; j<r.get_predicatsR().size(); ++j){
+      Predicate pr = r.get_predicatsR()[j];
+      v_regle.push_back(make_pair(pr.get_nom(), pr.get_constantes()));
+    }
+    vector_regles.push_back(v_regle);
+  }
+  Ecriture ecrire(_filename, vector_predicats, vector_regles);
 }
 
 vector<Predicate> libprolog::findPredicates(string nom){
