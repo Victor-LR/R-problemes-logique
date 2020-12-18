@@ -83,25 +83,28 @@ public:
   //Permet de lire un fichier .pl et de remplir les listes prédicat et règle
   void readPl(string filename);
   //Génère un fichier .cpp qui résout spécifiquement le problème du fichier prolog
+  //A CHANGER
   void generateCPP();
-  //Lance la résolution du problème et affiche pour chaque règles les résultats possibles en fonctions des prédicats (faits)
+  //Lance la résolution du problème et affiche pour chaque règles les résultats
+  //déduits en fonction des prédicats (faits)
   void solvePl();
-  //Génère un fichier .pl à partir des listes prédicat et règle
+  //Génère un fichier .pl à partir des listes _predicates et _rules
   void exportPl(string filename);
 
   /*predicates*/
-  //Retourne la liste des prédicats
+  //Retourne la liste des prédicats _predicates
   vector<Predicate> getPredicates();
-  //A partir d'un string donné en argument, récupère tous les prédicats du même nom 
+  //A partir d'un string donné en argument, récupère tous les prédicats du même nom
   vector<Predicate> findPredicates(string nom);
   //Setteur de la liste des prédicats
   void setPredicats(vector<Predicate> predicats);
-  //Ajoute un prédicat à la liste
+  //Ajoute un prédicat à la liste _predicates
   void addPredicate(Predicate p);
   /*Ajoute un prédicat avec comme arguments :
-    son nom, 
-    n le nombre de constantes du prédicats à ajouter,
-    une suite de n string séparé par une virgule correspondant aux arguments
+    nom : son nom,
+    n : le nombre de constantes du prédicats à ajouter,
+    ... : une suite de n string séparées par des virgules correspondant
+          aux constantes du predicats
   */
   void addPredicate(string nom, int n, ...);
   Predicate createPredicate(string nom, int n, ...);
@@ -115,10 +118,11 @@ public:
   //Ajoute une règle à la liste
   void addRule(Rule r);
   /*Ajoute une règle avec comme arguments :
-    son nom,
-    un vecteur contenant la liste des prédicats définissant la règle,
-    n le nombre de variables de la règle,
-    une suite de n string séparé par une virgule correspondant aux variables
+    nom : son nom,
+     predicats : un vecteur contenant la liste des prédicats définissant la règle
+    n : le nombre de variables de la règle,
+    ... : une suite de n string séparées par des virgules correspondant aux variables
+          de la règle
   */
   void addRule(string nom, vector<Predicate> predicats, int n, ...);
   Rule createRule(string nom, vector<Predicate> predicats, int n, ...);
@@ -128,7 +132,7 @@ private:
   void doRecursion(int baseCondition, Rule r, vector<Predicate> t,
   multimap<string, pair<int,int>> &mapVariables,
   multimap<pair<int,int>, pair<int, int>> &conditons);
-  
+
   multimap<pair<int,int>, pair<int, int>> generateConditions
   (multimap<string, pair<int, int>> mapVariables);
 };

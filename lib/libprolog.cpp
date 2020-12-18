@@ -157,6 +157,8 @@ Rule libprolog::createRule(string nom, vector<string> var, vector<Predicate> pre
 
 
 void libprolog::generateCPP(){
+  //a refaire a partir de _predicats, _rules
+  //convertir struct -> vector<string....>
   Ecriture ecrire(_filename, listPredicat, listRegles);
 }
 
