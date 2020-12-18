@@ -6,17 +6,22 @@
 #include "../ecriture.cpp"
 
 struct Predicate{
+  /*
+    _nom : nom du prédicat (correspond à un fait)
+    _constantes : liste contenant les constantes du prédicat
+  */
   Predicate(string nom, vector<string> constantes):_nom(nom), _constantes(constantes){}
   string _nom;
   vector<string> _constantes;
 
+  //Getteurs et Setteurs
   string get_nom(){return _nom;}
   void set_nom(string nom){_nom = nom;}
 
-  string& operator[](size_t i){return _constantes[i];}
-
   vector<string> get_constantes(){return _constantes;}
   void set_constantes(vector<string> constantes){_constantes = constantes;}
+
+  string& operator[](size_t i){return _constantes[i];}
 
   friend ostream& operator<<(ostream &out,const Predicate &p) {
     out << p._nom << "(";
@@ -29,11 +34,18 @@ struct Predicate{
 };
 
 struct Rule{
+  /*
+    _nom : nom de la règle
+    _var : liste contenant les variables de la règle
+    _predicatsR : liste des prédicats formant la règle
+  */
   Rule(string nom, vector<string> var, vector<Predicate> predicats)
   :_nom(nom), _var(var), _predicatsR(predicats){}
   string _nom;
   vector<string> _var;
   vector<Predicate> _predicatsR;
+
+  //Getteurs et Setteurs
 
   string get_nom(){return _nom;}
   void set_nom(string nom){_nom = nom;}
@@ -59,30 +71,55 @@ struct Rule{
 
 class libprolog {
 private:
+  //Nom du fichier prolog lu
   string _filename;
+  //Liste des prédicats/faits
   vector<Predicate> _predicats;
+  //Liste des règles
   vector<Rule> _rules;
 
 public:
   /*utility*/
+  //Permet de lire un fichier .pl et de remplir les listes prédicat et règle
   void readPl(string filename);
+  //Génère un fichier .cpp qui résout spécifiquement le problème du fichier prolog
   void generateCPP();
+  //Lance la résolution du problème et affiche pour chaque règles les résultats possibles en fonctions des prédicats (faits)
   void solvePl();
+  //Génère un fichier .pl à partir des listes prédicat et règle
   void exportPl(string filename);
 
   /*predicates*/
+  //Retourne la liste des prédicats
   vector<Predicate> getPredicates();
+  //A partir d'un string donné en argument, récupère tous les prédicats du même nom 
   vector<Predicate> findPredicates(string nom);
+  //Setteur de la liste des prédicats
   void setPredicats(vector<Predicate> predicats);
+  //Ajoute un prédicat à la liste
   void addPredicate(Predicate p);
+  /*Ajoute un prédicat avec comme arguments :
+    son nom, 
+    n le nombre de constantes du prédicats à ajouter,
+    une suite de n string séparé par une virgule correspondant aux arguments
+  */
   void addPredicate(string nom, int n, ...);
   Predicate createPredicate(string nom, int n, ...);
   Predicate createPredicate(string nom, vector<string> constantes);
 
   /*rules*/
+  //Retourne la liste des règles
   vector<Rule> getRules();
+  //Setteur de la liste des prédicats
   void setRules(vector<Rule> rules);
+  //Ajoute une règle à la liste
   void addRule(Rule r);
+  /*Ajoute une règle avec comme arguments :
+    son nom,
+    un vecteur contenant la liste des prédicats définissant la règle,
+    n le nombre de variables de la règle,
+    une suite de n string séparé par une virgule correspondant aux variables
+  */
   void addRule(string nom, vector<Predicate> predicats, int n, ...);
   Rule createRule(string nom, vector<Predicate> predicats, int n, ...);
   Rule createRule(string nom, vector<string> var, vector<Predicate> predicats);
