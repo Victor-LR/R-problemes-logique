@@ -135,6 +135,10 @@ Predicate libprolog::createPredicate(string nom, int n, ...){
   return Predicate(nom, v_constantes);
 }
 
+Predicate libprolog::createPredicate(string nom, vector<string> constantes){
+  return Predicate(nom, constantes);
+}
+
 Rule libprolog::createRule(string nom, vector<Predicate> predicats, int n, ...){
   vector<string> v_var;
   va_list vars;
@@ -146,6 +150,11 @@ Rule libprolog::createRule(string nom, vector<Predicate> predicats, int n, ...){
   va_end(vars);
   return Rule(nom, v_var, predicats);
 }
+
+Rule libprolog::createRule(string nom, vector<string> var, vector<Predicate> predicats){
+  return Rule(nom, var, predicats);
+}
+
 
 void libprolog::generateCPP(){
   Ecriture ecrire(_filename, listPredicat, listRegles);
@@ -161,125 +170,83 @@ vector<Predicate> libprolog::findPredicates(string nom){
   return v;
 }
 
-/*retourne les instances des preds d'une regle*/
-vector<Predicate> libprolog::getPredicatesInRule(Rule r){
-  vector<Predicate> v;
-  vector<Predicate> vr = r.get_predicatsR();
-  for(Predicate p : vr){
-    vector<Predicate> x = findPredicates(p.get_nom());
-    v.insert(v.end(), x.begin(), x.end());
-  }
-  return v;
-}
-
 void libprolog::doRecursion(int baseCondition, Rule r, vector<Predicate> t,
-multimap<string, pair<int,int>> &mapVariables,
-multimap<pair<int,int>, pair<int, int>> &conditions){
- vector<Predicate> preds = r.get_predicatsR();
- if(baseCondition==0){
-     reverse(t.begin(), t.end());
-     bool continuer = true;
-     vector<string> v_sol;
-     for(auto p: conditions){
-         if(continuer && t.at(p.first.first-1)[p.first.second-1] ==
-         t.at(p.second.first-1)[p.second.second-1]){
-             continuer = true;
-             // v_sol.push_back(t.at(p.first.first-1)[p.first.second-1]);
-             //remplir vector
-         }else{
-             continuer = false;
-             break;
-         }
-     }
-     string value;
-     if(continuer){
-       for(auto var : r.get_var()){
-         auto it = mapVariables.find(var);
-         if(it != mapVariables.end()){
-           value = t.at(it->second.first-1)[it->second.second-1];
-           v_sol.push_back(value);
-         }
-       }
-        std::cout << "SOLUTION DEDUITE :" << '\n';
-          for(string sol : v_sol){
-            std::cout << sol << " ,";
+  multimap<string, pair<int,int>> &mapVariables,
+  multimap<pair<int,int>, pair<int, int>> &conditions){
+    vector<Predicate> preds = r.get_predicatsR();
+    if(baseCondition==0){
+      reverse(t.begin(), t.end());
+      bool continuer = true;
+      vector<string> v_sol;
+      for(auto p: conditions){
+        if(continuer && t.at(p.first.first-1)[p.first.second-1] ==
+        t.at(p.second.first-1)[p.second.second-1]){
+          continuer = true;
+        }else{
+          continuer = false;
+          break;
+        }
+      }
+      string value;
+      if(continuer){
+        for(auto var : r.get_var()){
+          auto it = mapVariables.find(var);
+          if(it != mapVariables.end()){
+            value = t.at(it->second.first-1)[it->second.second-1];
+            v_sol.push_back(value);
           }
-          std::cout << v_sol.size() << '\n';
-         //generate solution
-         //recup pos X1,X2,X3,X4 dans la tete de r
-     }
-
-   // for( Predicate p : t){
-   //   std::cout << p << ", ";
-   //   //if (/* condition */) {
-   //     /* _predicats.push_back(Predicate(r.get_nom(), )); */
-   //   }
-
-   // std::cout<<"taille " << t.size() << endl;
-   count++;
- } else {
-   // preds.erase(preds.begin());
-   baseCondition--;
-   for(Predicate p : findPredicates(preds[baseCondition].get_nom())){ //liste des instances de preds du corps de r
-     t.push_back(p);
-     doRecursion(baseCondition, r, t, mapVariables, conditions);
-     t.pop_back();
-   }
- }
-}
-
-void libprolog::solvePl(){
-  for(Rule r : _rules){
-    //multimap variables/position de r
-    multimap<string, pair<int, int>> mapVariables;
-    auto corps_regle = r.get_predicatsR();
-    for(int i=1; i<=corps_regle.size(); ++i){
-      Predicate p = corps_regle[i-1];
-      auto var_pred = p.get_constantes();
-      for(int j=1; j<=var_pred.size(); ++j){
-        mapVariables.insert(make_pair(var_pred[j-1], make_pair(i,j)));
+        }
+        Predicate deduction(r.get_nom(), v_sol);
+        std::cout << "DEDUCTION : " << deduction << '\n';
+        _predicats.push_back(deduction);
+      }
+    } else {
+      baseCondition--;
+      for(Predicate p : findPredicates(preds[baseCondition].get_nom())){ //liste des instances de preds du corps de r
+        t.push_back(p);
+        doRecursion(baseCondition, r, t, mapVariables, conditions);
+        t.pop_back();
       }
     }
-    //affichage map
-    std::cout << "MapVariable pour " << r.get_nom() << '\n';
-    for(auto entry : mapVariables){
-      std::cout << entry.first << " " << entry.second.first << " " <<
-      entry.second.second << '\n';
-    }
-    std::cout << "DEBUT DE REGLE " << r << '\n';
-    vector<Predicate> t;
-    int taillecorpsregle = r.get_predicatsR().size();
-    multimap<pair<int,int>, pair<int, int>> conditions
-    = generateConditions(mapVariables);
-    std::cout << "========================" << '\n';
-    std::cout << "MapConditions " << '\n';
-    for(auto entry : conditions){
-      std::cout << entry.first.first << " " << entry.first.second
-      << " " << entry.second.first << " " <<
-      entry.second.second << '\n';
-    }
-    doRecursion(taillecorpsregle, r, t, mapVariables, conditions);
   }
-  std::cout << "it : " << count << '\n';
-}
 
-multimap<pair<int,int>, pair<int, int>> libprolog::generateConditions
-(multimap<string, pair<int, int>> mapVariables){
-  //création des conditions parcourues
-  multimap<pair<int,int>, pair<int, int>> conditions;
-			for(auto v1 : mapVariables){
-				for(auto v2 : mapVariables){
-					//si deux variable du prédicat sont égales donc qu'il faut les comparer :
-					// exemple (grand_pere(X,Z):- pere(X,Y), pere(Y,Z).) Y==Y test
-					// et si il ne sagit pas du même t donc du même prédicat
-					if((v1.first == v2.first) && (v1.second.first != v2.second.first)){
-						//Suppression des doublons dans les conditions
-						if (v1.second.first < v2.second.first){
-              conditions.insert(make_pair(make_pair(v1.second.first,v1.second.second)
-              ,make_pair(v2.second.first,v2.second.second)));
-						}
-					}
-				}
-			}
+  void libprolog::solvePl(){
+    for(Rule r : _rules){
+      //multimap variables/position dans r
+      multimap<string, pair<int, int>> mapVariables;
+      auto corps_regle = r.get_predicatsR();
+      for(int i=1; i<=corps_regle.size(); ++i){
+        Predicate p = corps_regle[i-1];
+        auto var_pred = p.get_constantes();
+        for(int j=1; j<=var_pred.size(); ++j){
+          mapVariables.insert(make_pair(var_pred[j-1], make_pair(i,j)));
+        }
+      }
+      vector<Predicate> t;
+      int taillecorpsregle = r.get_predicatsR().size();
+      multimap<pair<int,int>, pair<int, int>> conditions
+      = generateConditions(mapVariables);
+      doRecursion(taillecorpsregle, r, t, mapVariables, conditions);
+    }
+  }
+
+  multimap<pair<int,int>, pair<int, int>> libprolog::generateConditions
+  (multimap<string, pair<int, int>> mapVariables){
+    //création des conditions parcourues
+    multimap<pair<int,int>, pair<int, int>> conditions;
+    for(auto v1 : mapVariables){
+      for(auto v2 : mapVariables){
+        //si deux variable du prédicat sont égales donc qu'il faut les comparer :
+        // exemple (grand_pere(X,Z):- pere(X,Y), pere(Y,Z).) Y==Y test
+        // et si il ne sagit pas du même t donc du même prédicat
+        if((v1.first == v2.first) && (v1.second.first != v2.second.first)){
+          //Suppression des doublons dans les conditions
+          if (v1.second.first < v2.second.first){
+            conditions.insert(make_pair(make_pair(v1.second.first,v1.second.second)
+            ,make_pair(v2.second.first,v2.second.second)));
+          }
+        }
+      }
+    }
     return conditions;
-}
+  }
