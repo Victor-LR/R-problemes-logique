@@ -207,17 +207,19 @@ vector<Predicate> libprolog::findPredicates(string nom){
   return v;
 }
 
-void libprolog::doRecursion(int baseCondition, Rule r, vector<Predicate> t,
+void libprolog::doRecursion(int baseCondition, Rule r, vector<Predicate> possiblePredicats,
   multimap<string, pair<int,int>> &mapVariables,
   multimap<pair<int,int>, pair<int, int>> &conditions){
     vector<Predicate> preds = r.get_predicatsR();
+    //une fois qu'on a remplit possiblePredicats avec tout les predicats possibles on peu chercher une solution
     if(baseCondition==0){
-      reverse(t.begin(), t.end());
+      reverse(possiblePredicats.begin(), possiblePredicats.end());
       bool continuer = true;
       vector<string> v_sol;
+      //on verifie si les conditions sont correctes dans les predicats possibles, c'est donc l'équivalent d'une regle en prolog
       for(auto p: conditions){
-        if(continuer && t.at(p.first.first-1)[p.first.second-1] ==
-        t.at(p.second.first-1)[p.second.second-1]){
+        if(continuer && possiblePredicats.at(p.first.first-1)[p.first.second-1] ==
+        possiblePredicats.at(p.second.first-1)[p.second.second-1]){
           continuer = true;
         }else{
           continuer = false;
@@ -225,11 +227,12 @@ void libprolog::doRecursion(int baseCondition, Rule r, vector<Predicate> t,
         }
       }
       string value;
+      //si les conditions sont remplies on en deduit les solutions
       if(continuer){
         for(auto var : r.get_var()){
           auto it = mapVariables.find(var);
           if(it != mapVariables.end()){
-            value = t.at(it->second.first-1)[it->second.second-1];
+            value = possiblePredicats.at(it->second.first-1)[it->second.second-1];
             v_sol.push_back(value);
           }
         }
@@ -240,9 +243,9 @@ void libprolog::doRecursion(int baseCondition, Rule r, vector<Predicate> t,
     } else {
       baseCondition--;
       for(Predicate p : findPredicates(preds[baseCondition].get_nom())){ //liste des instances de preds du corps de r
-        t.push_back(p);
-        doRecursion(baseCondition, r, t, mapVariables, conditions);
-        t.pop_back();
+        possiblePredicats.push_back(p);
+        doRecursion(baseCondition, r, possiblePredicats, mapVariables, conditions);
+        possiblePredicats.pop_back();
       }
     }
   }
@@ -252,6 +255,8 @@ void libprolog::doRecursion(int baseCondition, Rule r, vector<Predicate> t,
       //multimap variables/position dans r
       multimap<string, pair<int, int>> mapVariables;
       auto corps_regle = r.get_predicatsR();
+
+      //on remplit mapVariables
       for(int i=1; i<=corps_regle.size(); ++i){
         Predicate p = corps_regle[i-1];
         auto var_pred = p.get_constantes();
@@ -259,11 +264,13 @@ void libprolog::doRecursion(int baseCondition, Rule r, vector<Predicate> t,
           mapVariables.insert(make_pair(var_pred[j-1], make_pair(i,j)));
         }
       }
-      vector<Predicate> t;
+      vector<Predicate> possiblePredicats;
+      //nombre de prédicats permettant de déterminer une partie de la recursion
       int taillecorpsregle = r.get_predicatsR().size();
       multimap<pair<int,int>, pair<int, int>> conditions
       = generateConditions(mapVariables);
-      doRecursion(taillecorpsregle, r, t, mapVariables, conditions);
+      //on parcours toutes les combinaisons de variables possibles
+      doRecursion(taillecorpsregle, r, possiblePredicats, mapVariables, conditions);
     }
   }
 
