@@ -24,8 +24,6 @@ public:
 		generateInclude(myfile);
 		generatePrint(myfile);
 		generateClassObject(myfile);
-		generateClassVariable(myfile);
-		generateClassValue(myfile);
 		generateClassTuple(listRegles,listPredicat,myfile);
 		generateVectorPredicat(listPredicat, myfile);
 		generateVectorRegle(listRegles, myfile);
@@ -73,7 +71,16 @@ public:
 		file << "\tvirtual ~Object() {\n";
 		file << "\t}\n\n";
 
-		file << "\tvirtual int compare(const Object & obj) = 0;\n\n";
+		file << "\tint compare(const Object & obj) {\n";
+		file << "\t\tObject * o = dynamic_cast<Object *>(&const_cast<Object &>(obj));\n";
+		file << "\t\tif(o == nullptr) {\n";
+		file << "\t\t\treturn 0;\n";
+		file << "\t\t} else {\n";
+		file << "\t\t\tif (value == o->value) return 0;\n";
+		file << "\t\t\treturn 1;\n";
+		file << "\t\t}\n";
+		file << "\t\treturn 0;\n";
+		file << "\t}\n\n";
 
 		file << "\tfriend bool operator==(const Object& obj1, const Object& obj2) {\n";
 		file << "\t\treturn const_cast<Object &>(obj1).compare(obj2) == 0;\n";
@@ -109,44 +116,10 @@ public:
 				file << "list<Tuple" << tuple_size << "> " + nom + ";\n";
 				nomPredicatListe.push_back(nom);
 			}
-			
+
 		}
 		file << "\n";
 	}
-
-	static void generateClassVariable(ofstream &file){
-		file << "class Variable : public Object {\n";
-		file << "public:\n";
-
-		file << "\tVariable(string name) : Object(name){ }\n\n";
-
-		file << "\tint compare(const Object & obj) {\n";
-		file << "\t\treturn 0;\n";
-		file << "\t}\n\n";
-
-		file << "};\n\n";
-	}
-
-	static void generateClassValue(ofstream &file){
-		file << "class Value : public Object {\n";
-		file << "public:\n";
-
-		file << "\tValue(string identifier) : Object(identifier){}\n\n";
-
-		file << "\tint compare(const Object & obj) {\n";
-		file << "\t\tValue * val = dynamic_cast<Value *>(&const_cast<Object &>(obj));\n";
-		file << "\t\tif(val == nullptr) {\n";
-		file << "\t\t\treturn 0;\n";
-		file << "\t\t} else {\n";
-		file << "\t\t\tif (value == val->value) return 0;\n";
-		file << "\t\t\treturn 1;\n";
-		file << "\t\t}\n";
-		file << "\t\treturn 0;\n";
-		file << "\t}\n\n";
-
-		file << "};\n\n";
-	}
-
 
 	static void generateClassTuple(vector<vector <pair<string, vector<string>>>> regles, vector<pair<string, vector<vector<string>>>> predicat, ofstream & file){
 
@@ -234,7 +207,7 @@ public:
 				file << "\t" << nom + ".push_back(Tuple" << tuple_size << "(";
 				//parcour chaque string du nuplet (Jean)
 				for(int i = 0; i < nuplet.size(); i++){
-					file << "new Value(\""+nuplet.at(i)+"\")" << (i==nuplet.size()-1 ? "" : ",");
+					file << "new Object(\""+nuplet.at(i)+"\")" << (i==nuplet.size()-1 ? "" : ",");
 				}
 				file << "));\n";
 			}
@@ -291,11 +264,11 @@ public:
 			auto nbpredicat = regle.size();
 			auto tuple_size = regle.at(0).second.size();
 			file << "void " + nomRegle + "_deduce";
-			file << nomRegleMap[nomRegle]; 
+			file << nomRegleMap[nomRegle];
 			file << "(){\n";
 			string tab = "\t";
 
-			//création du futur parcours de toutes les combinaisons des prédicats 
+			//création du futur parcours de toutes les combinaisons des prédicats
 			for(int t = 1; t<regle.size(); t++){
 				auto predicat = regle.at(t);
 				string nomPredicat = predicat.first;
@@ -316,7 +289,7 @@ public:
 				for(auto v2 : mapVariables){
 					//si deux variable du prédicat sont égales donc qu'il faut les comparer :
 					// exemple (grand_pere(X,Z):- pere(X,Y), pere(Y,Z).) Y==Y test
-					// et si il ne sagit pas du même t donc du même prédicat 
+					// et si il ne sagit pas du même t donc du même prédicat
 					if((v1.first == v2.first) && (v1.second.first != v2.second.first)){
 						int v1nombre = stoi((v1.second.first).substr(1,1));
 						int v2nombre = stoi((v2.second.first).substr(1,1));
@@ -331,7 +304,7 @@ public:
 				}
 			}
 
-			//Création du code pour insérer une solution dans la liste finale 
+			//Création du code pour insérer une solution dans la liste finale
 			file << tab << "\t" + nomRegle + ".push_back(Tuple" << tuple_size << "(";
 
 			for(int i = 0; i<variablesRegle.size(); i++){
@@ -352,4 +325,3 @@ public:
 	}
 
 };
-
