@@ -44,8 +44,6 @@ void libprolog::readPl(string filename){
       }
       _rules.push_back(Rule(nomRegle, variables, predicats));
     }
-  } else {
-    std::cout << "erreur de Lecture" << '\n';
   }
 }
 

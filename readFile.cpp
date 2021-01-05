@@ -201,6 +201,7 @@ static bool read(string fileName)
     if (!fichier.good())
     {
         cout << "le fichier renseigné en paramètre n'existe pas" << endl;
+        throw runtime_error("Could not open file");
         return false;
     }
     string ligne;
