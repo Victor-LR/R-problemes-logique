@@ -80,6 +80,7 @@ void libprolog::exportPl(string filename){
     }
     myfile << endl;
   }
+  std::cout << "Fichier Prolog créé : " << filename << '\n';
   myfile.close();
 }
 /*

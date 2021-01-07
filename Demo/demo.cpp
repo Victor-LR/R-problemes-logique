@@ -21,29 +21,36 @@ int main(int argc, char **argv)
 
 	l.readPl(fileName);
 
-	vector<string> v; v.push_back("oui"); v.push_back("non");
-	l.addPredicate(Predicate("titi", v));
-	l.addPredicate("coucou", 4, "victor", "jerome", "tomotei", "matthias");
-
-	vector<Predicate> preds;
-	preds.push_back(l.createPredicate("pred1", 4, "X", "Y", "Z", "K"));
-	preds.push_back(l.createPredicate("pred2", 2, "Z", "Y"));
-	l.addRule("regle", preds, 3, "X", "Y", "Z");
-
-/*
+	std::cout << "Liste des Faits : " << '\n';
 	for(Predicate p : l.getPredicates()){
 		std::cout << p << '\n';
 	}
 
+	std::cout << "=====================" << '\n';
+
+	std::cout << "Liste des Regles : " << '\n';
 	for(Rule r : l.getRules()){
 		std::cout << r << '\n';
 	}
-*/
+
 	l.generateCPP();
+
+	l.solvePl();
+
+	std::cout << "=====================" << '\n';
+	std::cout << "Liste des Faits après déductions : " << '\n';
+	for(Predicate p : l.getPredicates()){
+		std::cout << p << '\n';
+	}
+
+	l.addPredicate("boit", 2, "platon", "soda");
+
+	vector<Predicate> preds;
+	preds.push_back(l.createPredicate("homme", 1, "X"));
+	l.addRule("philosophe", preds, 1, "X");
 
 	l.exportPl("sortie.pl");
 
-	// l.solvePl();
 
 	return 0;
 }

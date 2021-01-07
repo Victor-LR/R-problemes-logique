@@ -22,7 +22,6 @@ public:
 		auto found = filename.find_last_of("/\\");
  		if (found!=string::npos){
 			filename = filename.substr(found+1);
-			std::cout << filename << '\n';
 		}
 		myfile.open (filename+"cpp");
 
